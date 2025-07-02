@@ -60,4 +60,8 @@ $(document).ready(function(){
     } else {
         $('.nav-side').css('display', 'none');
     }
+
+   $('.mobile-nav').click(function(){
+    $('.div-mobile-nav').slideToggle(300);
+   });
 });
