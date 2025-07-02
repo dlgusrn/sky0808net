@@ -25,16 +25,28 @@ $beer_worship = $DB->query( "SELECT view, worship, title, link FROM live_list WH
         </div>
         <div class="nav-right">
             <h4 class="main-title">생방송 보기</h4>
-            <div class="admin-row">
+            <div class="container-fluid admin-row">
                 <!-- 하늘문 예배 영상 -->
                 <div class="row justify-content-center" id="div_live">
                     <h3>하늘문예배</h3>
-                    <div class="live col-8">
-                        <iframe src="https://www.youtube.com/embed/<?=$sky_worship['link']?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="div-live-list col-2">
-                        <div class="sky-live-list bg-light" style="overflow-y: scroll;"></div>
-                    </div>
+                    <? if ( ( false != $sky_worship || ! empty ( $sky_worship ) ) && $sky_worship['view'] == 'Y' ) : ?>
+                        <div class="live col-8">
+                            <iframe src="https://www.youtube.com/embed/<?=$sky_worship['link']?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="div-live-list col-2">
+                            <div class="sky-live-list bg-light" style="overflow-y: scroll;"></div>
+                        </div>
+                    <? else : ?>
+                        <div class="notify">
+                            <div class="text-center">
+                                <? if ( $_SESSION['admin_username'] == '정옥용' ) : ?>
+                                    지금은<br>예배시간이 아닙니다:)
+                                <? else : ?>
+                                    현재 송출중인 방송이 없습니다.<br>방송 등록 또는 송출해주세요 :)
+                                <? endif ; ?>
+                            </div>
+                        </div>
+                    <? endif ; ?>
                 </div>
 
                 <div class="center-line"></div>
@@ -42,12 +54,24 @@ $beer_worship = $DB->query( "SELECT view, worship, title, link FROM live_list WH
                 <!-- 브엘성회 예배 영상 -->
                 <div class="row justify-content-center" id="div_live" style="margin-bottom: 100px;">
                     <h3>브엘성회</h3>
-                    <div class="live col-8">
-                        <iframe src="https://www.youtube.com/embed/<?=$beer_worship['link']?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="div-live-list col-2">
-                        <div class="beer-live-list bg-light" style="overflow-y: scroll;"></div>
-                    </div>
+                    <? if ( ( false != $beer_worship || ! empty ( $beer_worship ) ) && $beer_worship['view'] == 'Y' ) : ?>
+                        <div class="live col-8">
+                            <iframe src="https://www.youtube.com/embed/<?=$beer_worship['link']?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="div-live-list col-2">
+                            <div class="beer-live-list bg-light" style="overflow-y: scroll;"></div>
+                        </div>
+                    <? else : ?>
+                        <div class="notify">
+                            <div class="text-center">
+                                <? if ( $_SESSION['admin_username'] == '정옥용' ) : ?>
+                                    지금은<br>예배시간이 아닙니다:)
+                                <? else : ?>
+                                    현재 송출중인 방송이 없습니다.<br>방송 등록 또는 송출해주세요 :)
+                                <? endif ; ?>
+                            </div>
+                        </div>
+                    <? endif ; ?>
                 </div>
             </div>
         </div>
