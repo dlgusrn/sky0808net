@@ -1,9 +1,9 @@
 <?
 // DB 연결
-$host = 'localhost';
-$database = 'sky0808';
-$user = 'sky0808net';
-$password = 'qkdthdtlf08!';
+$host = DB_HOST;
+$database = DB_DATABASE;
+$user = DB_USER;
+$password = DB_PASSWORD;
 
 try {
     $DB = new PDO ( "mysql:host=$host; dbname=$database;", $user, $password ) ;
