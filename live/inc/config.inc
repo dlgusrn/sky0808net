@@ -26,6 +26,8 @@ foreach ( $files as $file ) {
     }
 }
 
+array_push ( $exception_file_array , 'index.html' , 'login.php' , 'logout.php' , 'admin_login.php' , 'admin_logout.php' ) ;
+
 if ( $pageUrl[2] == 'admin' ) {
     if ( false == in_array ( $fileName , $exception_file_array ) && empty ( $_SESSION['admin_username'] ) ) {
         echo "<script>alert('잘못된 접근입니다.'); location.href = '".SITE_LIVE."/admin/'; </script> " ;
