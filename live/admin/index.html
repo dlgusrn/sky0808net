@@ -106,7 +106,7 @@ $beer_worship = $DB->query( "SELECT view, worship, title, link FROM live_list WH
                 var accessor_data = JSON.parse(data);
                 $('.beer-live-list').empty();
                 $.each(accessor_data, function(i){
-                    var accessor_branch = accessor_data[i].branch == 'ADMIN' ? '(관리자)' : '';
+                    var accessor_branch = accessor_data[i].branch == 'ADMIN' ? accessor_data[i].name != '정옥용' ? '(관리자)' : '' : '';
                     $('.beer-live-list').append(accessor_data[i].name+accessor_branch+'<br>');
                 });
             }
