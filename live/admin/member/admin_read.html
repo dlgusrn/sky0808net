@@ -1,0 +1,143 @@
+<?
+// 기본 설정 파일을 불러온다
+include_once '../../inc/config.inc' ;
+include_once '../../inc/top.inc' ;
+
+$row = $DB->query( 'SELECT * FROM member_admin WHERE idx = ' . $_GET['idx'] . ' ORDER BY idx DESC' )->fetch() ;
+?>
+<main class="live-main">
+    <div class="main-row">
+        <div class="nav-left">
+            <? include_once '../../inc/admin_nav.inc' ?>
+        </div>
+        <div class="nav-right">
+            <h4 class="main-title">관리자 관리</h4>
+            <form method="post" action="<?=SITE_LIVE?>/functions/mod_member_admin.php?idx=<?=$_GET['idx']?>">
+                <div class="container">
+                    <div class="row mb-4">
+                        <div class="col-3">
+                            <label for="church" class="col col-form-label">교회</label>
+                            <select class="form-select" name="church" id="church">
+                                <option value="sky">하늘문</option>
+                                <option value="beer">브엘성회</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="level" class="col col-form-label">등급</label>
+                            <select class="form-select" name="level" id="level">
+                                <option value="1" <?=1 == $row['level'] ? 'selected' : ''?>>1</option>
+                                <option value="2" <?=2 == $row['level'] ? 'selected' : ''?>>2</option>
+                                <option value="3" <?=3 == $row['level'] ? 'selected' : ''?>>3</option>
+                                <option value="4" <?=4 == $row['level'] ? 'selected' : ''?>>4</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="username" class="col col-form-label">이름</label>
+                            <input type="text" class="form-control" name="username" id="username" value="<?=$row['username']?>" placeholder="관리자 이름">
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <label for="password" class="col col-form-label">비밀번호</label>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="관리자 비밀번호">
+                        </div>
+                        <div class="col">
+                            <label for="password_check" class="col col-form-label">비밀번호 확인</label>
+                            <input type="password" class="form-control" name="password_check" id="password_check" placeholder="비밀번호 확인">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="mb-2">권한</div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="live_manage" id="live_manage" <?='Y' == $row['live_manage'] ? 'checked' : ''?>>
+                                    <label class="form-check-label" for="live_manage">생방송 보기</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="black_list" id="black_list" <?='Y' == $row['black_list'] ? 'checked' : ''?>>
+                                    <label class="form-check-label" for="black_list">블랙리스트 관리</label>
+                                </div>
+                                <div class="form-check form-switch div-member-manage">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="member_admin" id="member_admin" <?='Y' == $row['member_admin'] ? 'checked' : ''?> disabled>
+                                    <label class="form-check-label" for="member_admin">관리자 관리</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="live_list" id="live_list" <?='Y' == $row['live_list'] ? 'checked' : ''?>>
+                                    <label class="form-check-label" for="live_list">생방송 링크 관리</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="video_list" id="video_list" <?='Y' == $row['video_list'] ? 'checked' : ''?>>
+                                    <label class="form-check-label" for="video_list">연도별</label>
+                                </div>
+                                <div class="form-check form-switch div-member-manage">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="member_saint" id="member_saint" <?='Y' == $row['member_saint'] ? 'checked' : ''?> disabled>
+                                    <label class="form-check-label" for="member_saint">성도 관리</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="history" id="history" <?='Y' == $row['history'] ? 'checked' : ''?>>
+                                    <label class="form-check-label" for="history">생방송 접속 이력 관리</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" name="event_video" id="event_video" <?='Y' == $row['event_video'] ? 'checked' : ''?>>
+                                    <label class="form-check-label" for="event_video">행사</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gap-2 d-flex justify-content-end">
+                    <button class="btn btn-primary" type="submit">저장</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    // 레벨별 권한(관리자/성도 관리)
+    $('select[name=level]').change(function(){
+        if($(this).val() == 1){
+            $('#live_manage').prop('checked', true);
+            $('#live_list').prop('checked', true);
+            $('#history').prop('checked', true);
+            $('#black_list').prop('checked', true);
+            $('#video_list').prop('checked', true);
+            $('#event_video').prop('checked', true);
+            $('#member_admin').prop('checked', true);
+            $('#member_saint').prop('checked', true);
+        } else if($(this).val() == 2){
+            $('#live_manage').prop('checked', true);
+            $('#live_list').prop('checked', true);
+            $('#history').prop('checked', false);
+            $('#black_list').prop('checked', true);
+            $('#video_list').prop('checked', true);
+            $('#event_video').prop('checked', true);
+            $('#member_admin').prop('checked', false);
+            $('#member_saint').prop('checked', true);
+        } else if($(this).val() == 3){
+            $('#live_manage').prop('checked', true);
+            $('#live_list').prop('checked', true);
+            $('#history').prop('checked', false);
+            $('#black_list').prop('checked', true);
+            $('#video_list').prop('checked', false);
+            $('#event_video').prop('checked', false);
+            $('#member_admin').prop('checked', false);
+            $('#member_saint').prop('checked', false);
+        } else if($(this).val() == 4) {
+            $('#live_manage').prop('checked', true);
+            $('#live_list').prop('checked', false);
+            $('#history').prop('checked', false);
+            $('#black_list').prop('checked', false);
+            $('#video_list').prop('checked', false);
+            $('#event_video').prop('checked', false);
+            $('#member_admin').prop('checked', false);
+            $('#member_saint').prop('checked', false);
+        }
+    });
+</script>

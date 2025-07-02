@@ -1,0 +1,103 @@
+<?
+// 기본 설정 파일을 불러온다
+include_once 'inc/config.inc';
+include_once 'inc/top.inc';
+
+// 송출되도록 설정된 방송 불러오기
+$church = isset ( $_GET['church'] ) ? $_GET['church'] : 'sky' ;
+$worship = $DB->query( "SELECT `use`, `view`, `link` FROM live_list WHERE church = '{$church}' AND `use` = 'Y'" )->fetch() ;
+?>
+<!-- 생방송 view -->
+<nav class="top-menu">
+    <div class="back_button" style="position: absolute;">
+        <button id="back_btn" style="margin-left: 8.333vw; padding: 0; background-color: #FFFFFF; border: none;">
+            <img src="/img/back_button.png">
+        </button>
+    </div>
+    <div class="username-span">
+    <? if ( isset ( $_SESSION['username'] ) ) : ?>
+        <? if ( $_SESSION['branch'] == 'ADMIN' ) : ?>
+        <div class="admin-accessor">
+            <button class="btn dropdown-toggle text-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <mask id="mask0_33_145" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0">
+                        <circle cx="7.50001" cy="3.08277" r="2.53333" stroke="white"/>
+                        <path d="M14 13.692C14 10.1021 11.0899 7.19196 7.5 7.19196C3.91015 7.19196 1 10.1021 1 13.692" stroke="white"/>
+                    </mask>
+                    <g mask="url(#mask0_33_145)">
+                        <rect width="15" height="11" fill="white"/>
+                    </g>
+                </svg>
+                <span><?=$_SESSION['username']?>님</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="<?=SITE_LIVE?>/admin/live_list.html">생방송 링크 관리</a></li>
+                <li><a class="dropdown-item" href="<?=SITE_LIVE?>/member/logout.php?name=<?=$_SESSION['username']?>&branch=<?=$_SESSION['branch']?>">로그아웃</a></li>
+            </ul>
+        </div>
+        <? else : ?>
+        <div class="accessor">
+            <img src="/img/member_icon.png">
+            <span><?=$_SESSION['username']?>님</span>
+        </div>
+        <? endif ; ?>
+    <? endif ; ?>
+    </div>
+</nav>
+
+<main class="live-index">
+    <div class="church-select">
+        <!-- 예배 영상 -->
+        <div class="worship-title"><?=$church == 'sky' ? '하늘문 교회' : '브엘성회'?></div>
+        <div class="div-live">
+        <? if ( ( false != $worship || ! empty ( $worship ) ) && $worship['view'] == 'Y' ) : ?>
+            <div class="text-center live">
+                <div class="text-center">
+                    <iframe src="https://www.youtube.com/embed/<?=$worship['link']?>?rel=0" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        <? else : ?>
+            <div class="notify">
+                <div class="text-center">
+                    지금은<br>예배시간이 아닙니다:)
+                </div>
+            </div>
+        <? endif ; ?>
+            <div class="center-line"></div>
+            <div class="worship-notify">
+                <? if ( 'sky' == $church ) : ?>
+                    <img class="sky" src="/img/worship_time_sky.png">
+                <? else : ?>
+                    <img class="beer" src="/img/worship_time_beer.png">
+                <? endif ; ?>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // 생방송 상태 실시간 변경
+    var use = "<?=$worship['use']?>";
+    var view = "<?=$worship['view']?>";
+    var link = "<?=$worship['link']?>";
+
+    setInterval(function() {
+        $.ajax({
+            type: 'GET',
+            data: {link:link},
+            url: 'functions/check_live_list.php',
+            success: function(data) {
+                var live_data = JSON.parse(data);
+                if(live_data.view != view || live_data.use != use){
+                    location.reload();
+                }
+                view = live_data.view;
+                use = live_data.use;
+            }
+        });
+    }, 1000);
+
+    $('#back_btn').click(function(){
+        history.back();
+    });
+</script>

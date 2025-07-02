@@ -1,0 +1,93 @@
+<!-- 기본 설정 파일을 불러온다 -->
+<? include_once '../config.inc' ?>
+<? include_once '../inc/top.inc' ?>
+<?
+// 게시물 번호를 위한 DB 조회
+$num = $DB->query( 'SELECT * FROM live_history ORDER BY idx DESC' )->rowCount() ;
+$subt = 0 ;// 게시물 번호 계산을 위한 변수 초기화
+
+// 페이지네이션
+$page_set = 10 ; // 한 페이지에 출력할 게시물 수
+$block_set = 5 ; // 블럭당 페이지 수
+
+$page = isset ( $_GET['page'] ) ? $_GET['page'] : 1 ; // 현재 페이지
+$block = ceil ( $page / $block_set ) ; // 현재 블럭(올림 함수)
+
+$block_start = ( ( $block - 1 ) * $block_set ) + 1 ; // 블록의 시작번호
+$block_end = $block_start + $block_set - 1 ; // 블록 마지막 번호
+
+$total = $num ; // 총 게시글 수
+$total_page = ceil ( $total / $page_set ) ; // 총 페이지 수(올림 함수)
+$total_block = ceil ( $total_page / $block_set ) ; // 총 블럭 수(올림 함수)
+
+if ( $block_end > $total_page ) $block_end = $total_page ; // 블록의 마지막 번호가 총 페이지 수보다 크면 총 페이지 수를 마지막 번호로 처리
+ 
+$start_num = ( $page - 1 ) * $page_set ; // limit 시작 위치
+
+$listSql = $DB->query( 'SELECT * FROM live_history ORDER BY idx DESC LIMIT ' . $start_num . ', ' . $page_set ) ;
+?>
+<? include_once '../inc/nav.inc' ?>
+<main class="live_main">
+    <h4 class="main-title">생방송 접속 이력</h4>
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>구분</th>
+                        <th>이름</th>
+                        <th>로그인 시간</th>
+                        <th>로그아웃 시간</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <? foreach ( $listSql as $row ) : ?>
+                    <tr>
+                        <td width="100"><?=$num - ( $page_set * ( $page - 1 ) ) - $subt?></td>
+                        <td width="100"><?=$row['branch'] == 'ADMIN' ? '관리자' : '일반'?></td>
+                        <td width="200"><?=$row['name']?></td>
+                        <td width="200"><?=$row['login_date']?></td>
+                        <td width="200"><?=! empty ( $row['logout_date'] ) ? $row['logout_date'] : '-'?></td>
+                    </tr>
+                    <? if ( $subt < $page_set ) $subt++ ; ?>
+                    <? endforeach ; ?>
+                </tbody>
+            </table>
+
+            <!-- 페이지네이션 출력 -->
+            <div class="d-grid gap-2 d-flex justify-content-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item <?=$page == 1 ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item <?=$page == 1 ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=<?=$page-1?>" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+
+                        <? for ( $i = $block_start; $i <= $block_end; $i++ ) : ?>
+                        <li class="page-item <?=$page == $i ? 'active' : ''?>"><a class="page-link" href="?page=<?=$i?>"><?=$i?></a></li>
+                        <? endfor ;?>
+
+                        <li class="page-item <?=$page == $total_page ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=<?=$page+1?>" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li class="page-item <?=$page == $total_page ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=<?=$total_page?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</main>
+<? include_once '../inc/footer.inc' ?>

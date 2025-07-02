@@ -1,0 +1,118 @@
+/* 내비게이션바 관련 css */
+.top-menu {
+    background-color: white;
+    padding-top: 40px;
+}
+.navDropdown li:hover > .dropdownMenu {
+    display: block;
+}
+
+/* 유튜브 영상 사이즈 */
+.live {
+    width: 900px;
+    height: 450px;
+}
+
+/* 메인 영역 관련 css */
+.www_main {
+    padding-top: 103px;
+}
+.live_main {
+    padding-top: 80px;
+}
+.live_index {
+    padding-top: 150px;
+}
+.main-title {    
+    margin-left: 50px;
+    margin-bottom: 20px;
+}
+.index-title {
+    margin-right: 20% !important;
+    margin-left: auto !important;
+}
+
+@media (max-width: 640px) {
+    .top-menu {
+        padding-top: 20px;
+    }
+    .main-title {
+        margin-left: 10px;
+        margin-bottom: 20px;
+    }
+    .live {
+        width: 500px;
+        height: 258px;
+    }
+    .live-list {
+        margin-top: 20px;
+        width: 140px;
+        max-height: 300px;
+    }
+    .index-title {
+        margin-right: auto !important;
+        margin-left: auto !important;
+    }
+}
+
+/* margin css */
+.mgt10 {
+    margin-top: 10px;
+}
+.mgt20 {
+    margin-top: 20px;
+}
+.mgt30 {
+    margin-top: 30px;
+}
+.mgt40 {
+    margin-top: 40px;
+}
+.mgt50 {
+    margin-top: 50px;
+}
+
+/* padding css */
+.pdt10 {
+    padding-top: 10px;
+}
+.pdt20 {
+    padding-top: 20px;
+}
+.pdt30 {
+    padding-top: 30px;
+}
+.pdt40 {
+    padding-top: 40px;
+}
+.pdt50 {
+    padding-top: 50px;
+}
+
+/* 로그인 폼 css */
+.form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+  }
+  
+.form-signin .checkbox {
+    font-weight: 400;
+}
+
+.form-signin .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}

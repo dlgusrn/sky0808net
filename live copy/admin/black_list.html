@@ -1,0 +1,164 @@
+<!-- 기본 설정 파일을 불러온다 -->
+<? include_once '../config.inc' ?>
+<? include_once '../inc/top.inc' ?>
+<?
+// 게시물 번호를 위한 DB 조회
+$num = $DB->query( "SELECT * FROM black_list" )->rowCount() ;
+$subt = 1 ; // 게시물 번호 계산을 위한 변수 초기화
+
+// 페이지네이션
+$page_set = 10 ; // 한 페이지에 출력할 게시물 수
+$block_set = 5 ; // 블럭당 페이지 수
+
+$page = isset ( $_GET['page'] ) ? $_GET['page'] : 1 ; // 현재 페이지
+$block = ceil ( $page / $block_set ) ; // 현재 블럭(올림 함수)
+
+$block_start = ( ( $block - 1 ) * $block_set ) + 1 ; // 블록의 시작번호
+$block_end = $block_start + $block_set - 1 ; // 블록 마지막 번호
+
+$total = $num ; // 총 게시글 수
+$total_page = ceil ( $total / $page_set ) ; // 총 페이지 수(올림 함수)
+$total_block = ceil ( $total_page / $block_set ) ; // 총 블럭 수(올림 함수)
+
+if ( $block_end > $total_page ) $block_end = $total_page ; // 블록의 마지막 번호가 총 페이지 수보다 크면 총 페이지 수를 마지막 번호로 처리
+ 
+$start_num = ( $page - 1 ) * $page_set ; // limit 시작 위치
+
+$listSql = $DB->query( "SELECT * FROM black_list LIMIT " . $start_num . ', ' . $page_set ) ;
+
+// 요일 배열
+$yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
+?>
+<? include_once '../inc/nav.inc' ?>
+<main class="live_main">
+    <h4 class="main-title">블랙리스트 관리</h4>
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="10%"><input type="checkbox" id="all_checked"></th>
+                        <th>번호</th>
+                        <th>차단 닉네임</th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                <? if ( $listSql->rowCount() <= 0 ) : ?>
+                    <tr>
+                        <td class="text-center" colspan="3">데이터가 없습니다.</td>
+                    </tr>
+                <? else : ?>
+                    <? foreach ( $listSql as $row ) : ?>
+                    <tr>
+                        <td><input type="checkbox" value="<?=$row['idx']?>" name="del_check"></td>
+                        <td><?=( $page_set * ( $page - 1 ) ) + $subt?></td>
+                        <td><?=$row['nickname']?></td>
+                    </tr>
+                    <? if ( $subt < $page_set ) $subt++ ; ?>
+                    <? endforeach ; ?>
+                <? endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-grid d-flex justify-content-end">
+            <a type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#blacklistAddModal">등록</a>
+            <button type="button" class="btn btn-danger" id="blacklist_delete">삭제</button>
+        </div>
+
+        <!-- 페이지네이션 출력 -->
+        <div class="d-grid d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item <?=$page == 1 ? 'disabled' : ''?>">
+                        <a class="page-link" href="?page=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item <?=$page == 1 ? 'disabled' : ''?>">
+                        <a class="page-link" href="?page=<?=$page-1?>" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+
+                    <? for ( $i = $block_start; $i <= $block_end; $i++ ) : ?>
+                    <li class="page-item <?=$page == $i ? 'active' : ''?>"><a class="page-link" href="?page=<?=$i?>"><?=$i?></a></li>
+                    <? endfor ;?>
+
+                    <li class="page-item <?=$page >= $total_page ? 'disabled' : ''?>">
+                        <a class="page-link" href="?page=<?=$page+1?>" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li class="page-item <?=$page >= $total_page ? 'disabled' : ''?>">
+                        <a class="page-link" href="?page=<?=$total_page?>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- 블랙리스트 등록 모달 -->
+<div class="modal fade" id="blacklistAddModal" tabindex="-1" aria-labelledby="blacklistAddModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="blacklistAddModalLabel">블랙리스트 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="./save_black_list.php">
+                    <div class="container">
+                        <div class="mb-3 row">
+                            <label for="nickname" class="col-sm-2 col-form-label">닉네임</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="nickname" id="nickname" placeholder="닉네임 입력">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gap-2 d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">저장</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 블랙리스트 삭제
+    $('#blacklist_delete').click(function(){
+        var arr = [];
+        $('input[name=del_check]:checked').each(function (index, item){
+            arr.push($(item).val());
+        });
+
+        if(arr.length > 0){
+            location.href = './del_black_list.php?idx=' + arr;
+        } else {
+            alert('선택된 항목이 없습니다.');
+        }
+    });
+
+    // 삭제할 목록 체크 + 전체 선택 기능
+    $('#all_checked').click(function(){
+        if($(this).is(':checked')){
+            $('input[name=del_check]').prop('checked', true);
+        } else {
+            $('input[name=del_check]').prop('checked', false);
+        }
+    });
+    $('input[name=del_check]').click(function(){
+        var total = $('input[name=del_check]').length;
+		var checked = $('input[name=del_check]:checked').length;
+
+		if(total != checked){
+            $('#all_checked').prop('checked', false);
+        } else {
+            $('#all_checked').prop('checked', true);
+        }
+    });
+</script>
