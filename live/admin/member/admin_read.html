@@ -1,14 +1,14 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once '../../inc/config.inc' ;
-include_once '../../inc/top.inc' ;
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/top.inc';
 
 $row = $DB->query( 'SELECT * FROM member_admin WHERE idx = ' . $_GET['idx'] . ' ORDER BY idx DESC' )->fetch() ;
 ?>
 <main class="live-main">
     <div class="main-row">
         <div class="nav-left">
-            <? include_once '../../inc/admin_nav.inc' ?>
+            <? include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/admin_nav.inc' ?>
         </div>
         <div class="nav-right">
             <h4 class="main-title">관리자 관리</h4>

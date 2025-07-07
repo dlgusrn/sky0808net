@@ -1,7 +1,7 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once 'inc/config.inc';
-include_once 'inc/top.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/top.inc';
 
 // 송출되도록 설정된 방송 불러오기
 $church = isset ( $_GET['church'] ) ? $_GET['church'] : 'sky' ;

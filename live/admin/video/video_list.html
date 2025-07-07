@@ -1,7 +1,7 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once '../../inc/config.inc' ;
-include_once '../../inc/top.inc' ;
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/top.inc';
 
 // 교회 선택 조건문
 $church_select = isset ( $_GET['church'] ) ? $_GET['church'] : '';
@@ -44,7 +44,7 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
 <main class="live-main">
     <div class="main-row">
         <div class="nav-left">
-            <? include_once '../../inc/admin_nav.inc' ?>
+            <? include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/admin_nav.inc' ?>
         </div>
         <div class="nav-right">
             <h4 class="main-title">연도별 영상 관리</h4>
@@ -68,7 +68,8 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
                         </tr>
                     </thead>
                     <tbody class="align-middle">
-                    <? if ( $listSql->rowCount() <= 0 ) : ?>
+                    <!-- 다시보기 기능 작업 전으로 목록 미출력 -->
+                    <? if ( 0 <= 0 ) : ?>
                         <tr>
                         <td class="text-center" colspan="7">데이터가 없습니다.</td>
                         </tr>

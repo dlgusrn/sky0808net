@@ -1,6 +1,6 @@
 <? 
 // 기본 설정 파일을 불러온다
-include_once '../inc/config.inc' ;
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
 
 $row = $DB->query( "SELECT church FROM live_list WHERE idx = " . $_GET['idx'] )->fetch() ;
 

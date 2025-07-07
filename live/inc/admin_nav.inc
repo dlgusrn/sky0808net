@@ -1,6 +1,6 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once 'config.inc' ;
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
 
 if ( ! empty ( $_SESSION['admin_username'] ) ) {
     $admin_info = $DB->query( "SELECT * FROM `member_admin` WHERE `username` = '" . $_SESSION['admin_username'] . "'" )->fetch() ;

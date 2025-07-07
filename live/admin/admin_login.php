@@ -1,6 +1,6 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once '../inc/config.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
 
 // 관리자 정보 불러오기
 $row = $DB->query( "SELECT * FROM `member_admin` WHERE `username` = '" . $_POST['admin_name'] . "'" )->fetch() ;

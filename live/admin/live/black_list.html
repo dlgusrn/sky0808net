@@ -1,7 +1,7 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once '../../inc/config.inc' ;
-include_once '../../inc/top.inc' ;
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/top.inc';
 
 // 게시물 번호를 위한 DB 조회
 $num = $DB->query( "SELECT * FROM black_list" )->rowCount() ;
@@ -33,7 +33,7 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
 <main class="live-main">
     <div class="main-row">
         <div class="nav-left">
-            <? include_once '../../inc/admin_nav.inc' ?>
+            <? include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/admin_nav.inc' ?>
         </div>
         <div class="nav-right">
             <h4 class="main-title">블랙리스트 관리</h4>

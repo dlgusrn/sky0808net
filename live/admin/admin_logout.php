@@ -1,6 +1,6 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once '../inc/config.inc';
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
 
 // 생방송 접속자 목록에서 제거
 $DB->exec( "DELETE FROM live_entry WHERE `name` = '$_SESSION[admin_username]'" ) ;

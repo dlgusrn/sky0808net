@@ -1,6 +1,6 @@
 <? 
 // 기본 설정 파일을 불러온다
-include_once '../inc/config.inc' ;
+include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
 
 // 유튜브 고유번호 저장
 if ( strpos ( $_POST['link'], '/' ) == FALSE ) {
