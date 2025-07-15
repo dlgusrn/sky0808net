@@ -1,0 +1,251 @@
+html { font-family: "Noto Sans KR", sans-serif; transform : rotate(0.04deg); }
+
+input[type=text] {
+    ime-mode:active;
+}
+
+/* 메인 영역 관련 css */
+.www_main { padding-top: 103px; }
+
+.top-menu-index .accessor { background-color: #28323A; color: #FFFFFF; border-radius: 2.778vw; font-weight: 500; letter-spacing: -0.3px; text-align: center; position: relative; }
+.top-menu .accessor { background-color: #28323A; color: #FFFFFF; border-radius: 2.778vw; font-weight: 500; letter-spacing: -0.3px; text-align: center; position: relative; }
+
+/* .live-main { min-height: 100%; } */
+.live-main .main-row .nav-left { background-color: #28323A; color: #FFFFFF; }
+.live-main .main-row .nav-left .nav-menu .nav-side { display: none; background-color: #404b53; }
+.live-main .main-row .nav-left .nav-menu .nav-side:hover { background-color: #64727c; }
+.live-main .live-list { height: 450px; }
+
+.live-main .main-row .admin-row .notify { background: #E8E8E980; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-weight: 300; letter-spacing: -0.3px; }
+
+.live-index .div-live-index .worship { box-shadow: 0px 3px 6px 0px #0000001F; border-radius: 15px; }
+.live-index .div-live-index .worship .church-name {  text-align: left; }
+.live-index .div-live-index .worship .church-sentence { font-weight: 400; letter-spacing: -0.083vw; text-align: left; }
+.live-index .div-live-index .notify { background: #E8E8E980; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-weight: 300; letter-spacing: -0.3px; }
+
+.live-index .div-live .worship { box-shadow: 0px 3px 6px 0px #0000001F; border-radius: 15px; }
+.live-index .div-live .worship .church-name {  text-align: left; }
+.live-index .div-live .worship .church-sentence { font-weight: 400; letter-spacing: -0.083vw; text-align: left; }
+.live-index .worship-title { text-align: left; }
+.live-index .div-live .notify { background: #E8E8E980; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-weight: 300; letter-spacing: -0.3px; }
+
+/* 로그인 폼 css */
+.live-index .login-top span { text-align: center; }
+.live-index .login-form .form-signin input::placeholder { color: #92929A; }
+.live-index .login-form .form-signin #user_name,
+.live-index .login-form .form-signin #live_password { border-radius: 10px; background-color: #F4F4F6; border: 0px; }
+.live-index .login-form .form-signin input[type="checkbox"] { background-color: #4568F0; }
+.live-index .login-form .form-signin .checkbox #namesave { border: 1.5px solid #FFFFFF; border-radius: 4px; vertical-align: middle; }
+.live-index .login-form .form-signin input[type="checkbox"] + label > span { vertical-align: middle; padding-left: 5px; color: #4D565C; }
+
+.live-index .login-form .form-signin .login-btn button { border-radius: 10px; background-color: #4568F0; font-weight: 500; }
+
+/* 모바일 */
+@media ( max-width: 767px ) {
+    .top-menu-index .back_button img { width: 2.778vw; height: 4.444vw; }
+    .top-menu-index .username-span { margin-top: 5.556vw; margin-left: 8.333vw; margin-right: 8.333vw; display: flex; justify-content: end; }
+    .top-menu-index .accessor { width: auto; height: 5.556vw; padding: 0.556vw 2.5vw 0.556vw 2.222vw ; font-size: 2.778vw; max-width: 27.778vw; }
+    .top-menu-index .accessor img { width: 3.611vw; height: 3.333vw; margin-right: 0.556vw; }
+
+    .top-menu .back_button img { width: 2.778vw; height: 4.444vw; }
+    .top-menu .username-span { margin-top: 5.556vw; margin-left: 8.333vw; margin-right: 8.333vw; display: flex; justify-content: end; }
+    .top-menu .accessor { width: auto; height: 5.556vw; padding: 0.556vw 2.5vw 0.556vw 2.222vw ; font-size: 2.778vw; max-width: 27.778vw; }
+    .top-menu .accessor img { width: 3.611vw; height: 3.333vw; margin-right: 0.556vw; }
+
+    .live-index .church-select { margin-top: 15.556vw; }
+    .live-index .index-title { margin-left: 8.333vw; margin-right: 8.333vw; font-size: 5.556vw; font-weight: 500; line-height: 4.103vh; letter-spacing: -0.083vw; }
+    .live-index .div-live-index { margin-top: 8.889vw; }
+    .live-index .div-live-index #beer { margin-top: 2.778vw; }
+    .live-index .div-live-index .worship { height: 41.667vw; margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-index .div-live-index .worship .worship-row { height: 50%; }
+    .live-index .div-live-index .worship .church-name { height: 5.278vw; margin-top: 2.222vw; margin-left: 5.556vw; margin-right: 5.556vw; font-size: 5.556vw; font-weight: 400; line-height: 4.103vh; letter-spacing: -0.083vw; }
+    .live-index .div-live-index .worship .live-status img  { width: 10.278vw; height: 3.611vw; margin-top: 2.778vw; margin-right: 2.778vw; text-align: center; }
+    .live-index .div-live-index .worship .church-sentence { width: 31.667vw; height: 7.5vw; margin-top: 13.333vw; margin-left: 5.556vw; font-size: 3.333vw; line-height: 4.444vw; }
+    .live-index .div-live-index .worship .church-icon { float: right; }
+    .live-index .div-live-index .worship .church-icon img { width: 15vw; height: 21.667vw; margin-right: 5.556vw; }
+    .live-index .div-live-index .live { height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-index .div-live-index .live iframe { width: 83.333vw; height: 45.833vw; }
+    .live-index .div-live-index .notify { height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; font-size: 5.556vw; }
+    .live-index .div-live-index .worship-notify { text-align: center; }
+    .live-index .div-live-index .worship-notify img { width: 83.333vw; height: 70.556vw; }
+    .live-index .div-live-index .center-line { width: 100%; height: 2.222vw; background-color: #F4F5F7; margin-top: 8.333vw; margin-bottom: 8.333vw; }
+
+    .live-index .worship-title { margin-left: 8.333vw; margin-right: 8.333vw; font-size: 5.556vw; font-weight: 500; line-height: 4.103vh; letter-spacing: -0.083vw; }
+    .live-index .div-live { margin-top: 8.889vw; }
+    .live-index .div-live #beer { margin-top: 2.778vw; }
+    .live-index .div-live .worship { height: 41.667vw; margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-index .div-live .worship .worship-row { height: 50%; }
+    .live-index .div-live .worship .church-name { height: 5.278vw; margin-top: 2.222vw; margin-left: 5.556vw; margin-right: 5.556vw; font-size: 5.556vw; font-weight: 400; line-height: 4.103vh; letter-spacing: -0.083vw; }
+    .live-index .div-live .worship .live-status img  { width: 10.278vw; height: 3.611vw; margin-top: 2.778vw; margin-right: 2.778vw; text-align: center; }
+    .live-index .div-live .worship .church-sentence { width: 31.667vw; height: 7.5vw; margin-top: 13.333vw; margin-left: 5.556vw; font-size: 3.333vw; line-height: 4.444vw; }
+    .live-index .div-live .worship .church-icon { float: right; }
+    .live-index .div-live .worship .church-icon img { width: 15vw; height: 21.667vw; margin-right: 5.556vw; }
+    .live-index .div-live .live { height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-index .div-live .live iframe { width: 83.333vw; height: 45.833vw; }
+    .live-index .div-live .notify { height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; font-size: 5.556vw; }
+    .live-index .div-live .worship-notify { text-align: center; }
+    .live-index .div-live .worship-notify img { width: 83.333vw; }
+    .live-index .div-live .center-line { width: 100%; height: 2.222vw; background-color: #F4F5F7; margin-top: 8.333vw; margin-bottom: 8.333vw; }
+
+    /* 관리자 동영상 css */
+    /* .live-main .main-row .nav-right .admin-row {  } */
+    .live-main .main-row .nav-right .admin-row .live { height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-main .main-row .nav-right .admin-row .row>* { padding: 0; }
+    .live-main .main-row .nav-right .admin-row h3 { margin-left: 2.778vw; }
+    .live-main .main-row .nav-right .admin-row .notify { width: 83.333vw; height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; font-size: 5.556vw; }
+    .live-main .main-row .nav-right .admin-row .table>:not(caption)>*>* { padding: 2.778vw 1.111vw; }
+    .live-main .main-row .nav-right .admin-row .live iframe { width: 83.333vw; height: 45.833vw; }
+    .live-main .main-row .nav-right .admin-row .center-line { width: 100%; height: 2.222vw; background-color: #F4F5F7; margin-top: 8.333vw; margin-bottom: 8.333vw; }
+    .live-main .main-row .nav-right .admin-row #div_live { display: flex; flex-direction: column; }
+    .live-main .main-row .nav-right .admin-row .div-live-list { height: 45.833vw; margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-main .main-row .nav-right .admin-row .sky-live-list,
+    .live-main .main-row .nav-right .admin-row .beer-live-list { width: 83.333vw; height: 45.833vw; }
+
+    /* 생방송 로그인 폼 */
+    .live-index .login-form { margin-top: 35.556vw; }
+    .live-index .login-form .login-top { margin-bottom: 13.056vw; }
+    .live-index .login-form .login-top .login-top-logo img { height: 3.333vw; margin-left: 40.694vw; margin-right: 40.694vw; margin-bottom: 1.111vw; }
+    .live-index .login-form .login-top .live-text { margin-top: 3.611vw; }
+    .live-index .login-form .login-top .live-text img { width: 39.167vw; margin-left: auto; margin-right: auto; }
+    .live-index .login-form .login-top span { font-size: 8.333vw; font-weight: 700; line-height: 11.944vw; letter-spacing: -0.083vw; }
+    .live-index .login-form .form-signin { margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-index .login-form .form-signin input[type="text"] { height: 16.389vw; padding: 5.556vw 2.179vh; }
+    .live-index .login-form .form-signin input[type="text"]:focus { outline: 0; padding: 5.556vw 2.179vh; }
+    .live-index .login-form .form-signin input[type="password"] { height: 16.389vw; margin-bottom: 4.167vw; padding: 5.556vw 2.179vh; }
+    .live-index .login-form .form-signin input[type="password"]:focus { outline: 0; padding: 5.556vw 2.179vh; }
+    .live-index .login-form .form-signin input[type="checkbox"] { width: 5.556vw; height: 5.556vw; }
+    .live-index .login-form .form-signin #user_name { margin-bottom: 2.778vw; }
+    .live-index .login-form .form-signin .checkbox { height: 5.556vw; margin-bottom: 9.722vw; }
+    .live-index .login-form .form-signin .checkbox #namesave { color: #4D565C; font-size: 3.611vw; }
+    .live-index .login-form .form-signin .login-btn button { width: 100%; height: 16.389vw; font-size: 4.722vw; }
+
+    /* 관리자 로그인 폼 */
+    .live-main .admin-login-form { margin-top: 35.556vw; }
+    .live-main .admin-login-form .login-top { margin-bottom: 13.056vw; }
+    .live-main .admin-login-form .login-top img { height: 3.333vw; margin-left: 40.694vw; margin-right: 40.694vw; margin-bottom: 1.111vw; }
+    .live-main .admin-login-form .login-top span { font-size: 8.333vw; font-weight: 700; line-height: 11.944vw; letter-spacing: -0.083vw; }
+    .live-main .admin-login-form .form-signin { margin-left: 8.333vw; margin-right: 8.333vw; }
+    .live-main .admin-login-form .form-signin input[type="text"] { height: 16.389vw; padding: 5.556vw 2.179vh; margin-bottom: 2.778vw; }
+    .live-main .admin-login-form .form-signin input[type="password"] { height: 16.389vw; margin-bottom: 4.167vw; padding: 5.556vw 2.179vh; }
+    .live-main .admin-login-form .form-signin input[type="checkbox"] { width: 5.556vw; height: 5.556vw; }
+    .live-main .admin-login-form .form-signin #user_name { margin-bottom: 2.778vw; }
+    .live-main .admin-login-form .form-signin .checkbox { height: 5.556vw; margin-bottom: 9.722vw; }
+    .live-main .admin-login-form .form-signin .checkbox #namesave { color: #4D565C; font-size: 3.611vw; }
+    .live-main .admin-login-form .form-signin .login-btn button { width: 100%; height: 16.389vw; font-size: 4.722vw; border-radius: 2.778vw; background-color: #4568F0; }
+    .live-index .login-form .form-signin input[type="checkbox"] + label:before { width: 24px; }
+    
+    .live-main .live { width: 300px; height: 164px; margin-bottom: 4.167vw; }
+    .live-main .nav-right .main-title { margin-left: 2.778vw; margin-bottom: 4.167vw; margin-top: 5.556vw; }
+    
+    .live-list { margin-top: 20px; width: 140px; max-height: 300px; }
+
+    .live-main .main-row .nav-left .nav-menu { display: none; }
+    .live-main .main-row .nav-left .nav-menu .live-nav-top,
+    .live-main .main-row .nav-left .nav-menu .video-nav-top,
+    .live-main .main-row .nav-left .nav-menu .member-nav-top,
+    .live-main .main-row .nav-left .nav-menu .nav-side,
+    .live-main .main-row .nav-left .nav-menu .nav-logout { width: 234px; height: 55px; padding-left: 20px; line-height: 55px; border: #4D565C 1px solid; text-decoration: none; color: #FFFFFF; }
+    .live-main .main-row .nav-left .admin-logo { width: 110px; margin: 5px; }
+    .live-main .main-row .nav-left .nav-menu-mobile .div-mobile-nav a { height: 40px; padding-top: 8px; padding-left: 10px; border-bottom: #4D565C 1px solid; display: block; text-decoration: none; color: #FFFFFF; }
+    .live-main .main-row .nav-left .nav-menu-mobile .div-mobile-nav a.nav-side { background-color: #404b53; }
+}
+
+/* 태블릿 & PC */
+@media ( min-width: 768px ) {
+    .top-menu-index { width: 927.44px; margin-left: auto; margin-right: auto; margin-top: 90px; }
+    .top-menu-index .back_button { display: none; }
+    .top-menu-index .accessor { width: 135.94px; height: 43.07px; padding: 8px 0; font-size: 16px; }
+    .top-menu-index .accessor img { width: 23.85px; height: 25.71px; }
+
+    .top-menu { width: 1280px; margin-left: auto; margin-right: auto; margin-top: 90px; }
+    .top-menu .back_button { display: none; }
+    .top-menu .username-span { margin-top: 90px; display: flex; justify-content: end; }
+    .top-menu .accessor { width: 135.94px; height: 43.07px; padding: 8px 0; font-size: 16px; }
+    .top-menu .accessor img { width: 23.85px; height: 25.71px; }
+
+    .live-index .index-title { width: 1280px; text-align: center; margin: 53.93px auto 0; font-size: 40px; font-weight: 500; }
+    .live-index .div-live-index { width: 941.72px; margin: 92px auto 0; display: flex; }
+    .live-index .div-live-index #beer { margin-left: 34.28px; }
+    .live-index .div-live-index .worship { width: 453.72px; height: 228px; flex: 1 0 0%; }
+    .live-index .div-live-index .worship .church-name { padding-top: 10.34px; padding-left: 40px; }
+    .live-index .div-live-index .worship .church-name span { font-size: 27px; }
+    .live-index .div-live-index .worship .live-status img  { width: 48.51px; margin-top: 20px; margin-right: 20px; }
+    .live-index .div-live-index .worship .church-sentence { padding-top: 58px; padding-left: 40px; }
+    .live-index .div-live-index .worship .church-sentence span { font-size: 16px; }
+    .live-index .div-live-index .worship .church-icon { margin-top: 13px; }
+    .live-index .div-live-index .worship .church-icon img  { width: 70.14px; margin-right: 26.58px; }
+    .live-index .div-live-index .live iframe { width: 854px; height: 466.85px; }
+    .live-index .div-live-index .notify { width: 854px; height: 467px; font-size: 30px; }
+
+    .live-index .worship-title { width: 1280px; margin: 53.93px auto 0; font-size: 40px; font-weight: 500; }
+    .live-index .div-live { width: 1280px; margin: 64px auto 0; margin-top: 64px; display: flex; }
+    .live-index .div-live #beer { margin-left: 20px; }
+    .live-index .div-live .worship { width: 453.72px; height: 228px; flex: 1 0 0%; }
+    .live-index .div-live .worship .church-name { padding-top: 10.34px; padding-left: 40px; }
+    .live-index .div-live .worship .church-name span { font-size: 27px; }
+    .live-index .div-live .worship .live-status img  { width: 48.51px; margin-top: 20px; margin-right: 20px; }
+    .live-index .div-live .worship .church-sentence { padding-top: 58px; padding-left: 40px; }
+    .live-index .div-live .worship .church-sentence span { font-size: 16px; }
+    .live-index .div-live .worship .church-icon img  { width: 70.14px; margin-right: 30px; }
+    .live-index .div-live .live iframe { width: 854px; height: 466.85px; }
+    .live-index .div-live .notify { width: 854px; height: 467px; font-size: 30px; }
+    .live-index .div-live .worship-notify img.sky { content: url('/img/worship_time_sky_pc.png'); height: 462px; margin-left: 36px; }
+    .live-index .div-live .worship-notify img.beer { content: url('/img/worship_time_beer_pc.png'); height: 462px; margin-left: 36px; }
+
+    /* 생방송 로그인 폼 */
+    .live-index .login-form { margin-top: 194px; }
+    .live-index .login-form .login-top { margin-bottom: 48px; }
+    .live-index .login-form .login-top .login-top-logo img { width: 94.92px; height: 17px; margin-left: auto; margin-right: auto; margin-bottom: 15px; }
+    .live-index .login-form .login-top .live-text img { width: 194px; margin-left: auto; margin-right: auto; }
+    .live-index .login-form .form-signin { width: 398px; margin-left: auto; margin-right: auto; }
+    .live-index .login-form .form-signin input[type="text"] { width: 398px; height: 70px; margin-bottom: 10px; }
+    .live-index .login-form .form-signin input[type="text"]:focus { outline: 0; }
+    .live-index .login-form .form-signin input[type="password"] { width: 398px; height: 70px; margin-bottom: 16px; }
+    .live-index .login-form .form-signin input[type="password"]:focus { outline: 0; }
+    .live-index .login-form .form-signin input[type="checkbox"] { width: 20px; height: 20px; }
+    .live-index .login-form .form-signin .checkbox { height: 20px; margin-bottom: 40px; }
+    .live-index .login-form .form-signin .checkbox #namesave { color: #4D565C; font-size: 3.611vw; }
+    .live-index .login-form .form-signin .login-btn button { width: 100%; height: 70px; font-size: 22px; }
+    .live-index .login-form .form-signin input[type="checkbox"] + label:before { width: 24px; }
+
+    .live-main .admin-login-form { margin-top: 200px; }
+    .live-main .admin-login-form .login-top { margin-bottom: 48px; }
+    .live-main .admin-login-form .login-top img { width: 80px; }
+    .live-main .admin-login-form .login-top span { font-size: 32px; font-weight: 700; }
+    .live-main .admin-login-form .form-signin { width: 398px; margin-left: auto; margin-right: auto; }
+    .live-main .admin-login-form .form-signin input[type="text"] { width: 398px; height: 70px; margin-bottom: 10px; }
+    .live-main .admin-login-form .form-signin input[type="text"]:focus { outline: 0; }
+    .live-main .admin-login-form .form-signin input[type="password"] { width: 398px; height: 70px; margin-bottom: 16px; }
+    .live-main .admin-login-form .form-signin input[type="password"]:focus { outline: 0; }
+    .live-main .admin-login-form .form-signin input[type="checkbox"] { width: 18px; height: 18px; }
+    .live-main .admin-login-form .form-signin .checkbox { height: 20px; margin-bottom: 40px; }
+    .live-main .admin-login-form .form-signin .checkbox #namesave { color: #4D565C; font-size: 3.611vw; }
+    .live-main .admin-login-form .form-signin .login-btn button { width: 100%; height: 70px; font-size: 22px; }
+
+    .live-main .nav-right { flex-grow: 1; padding-left: 20px; }
+    .live-main .nav-right .main-title { margin-bottom: 20px; }
+    .live-main .nav-right .main-title .admin-row div { width: 1300px; }
+    .live-main .nav-right { padding-top: 80px; padding-right: 100px; }
+
+    /* 관리자 동영상 css */
+    .live-main .main-row .nav-right .admin-row .live { width: 880px; }
+    .live-main .main-row .nav-right .admin-row .live iframe { width: 854px; height: 467px; }
+    .live-main .main-row .nav-right .admin-row .notify { width: 854px; height: 467px; font-size: 30px; }
+    .live-main .main-row .nav-right .admin-row .center-line { width: 100%; height: 10px; background-color: #F4F5F7; margin-top: 60px; margin-bottom: 40px; }
+    .live-main .main-row .nav-right .admin-row .sky-live-list,
+    .live-main .main-row .nav-right .admin-row .beer-live-list { height: 467px; padding: 6px 8px; }
+
+    .live-main .main-row { min-height: 100%; display: flex; }
+    .live-main .main-row .nav-left .nav-menu-mobile { display: none; }
+    .live-main .main-row .nav-left a img { margin-top: 10px; margin-bottom: 10px; }
+    .live-main .main-row .nav-left .nav-menu { min-height: 97vh; display: flex; flex-flow: column wrap; }
+    .live-main .main-row .nav-left .nav-menu .live-nav-top,
+    .live-main .main-row .nav-left .nav-menu .video-nav-top,
+    .live-main .main-row .nav-left .nav-menu .member-nav-top,
+    .live-main .main-row .nav-left .nav-menu .nav-side,
+    .live-main .main-row .nav-left .nav-menu .nav-logout { width: 234px; height: 55px; padding-left: 20px; line-height: 55px; border: #4D565C 1px solid; text-decoration: none; color: #FFFFFF; }
+    .live-main .main-row .nav-left .nav-menu .live-nav-bottom,
+    .live-main .main-row .nav-left .nav-menu .video-nav-bottom,
+    .live-main .main-row .nav-left .nav-menu .member-nav-bottom { display: flex; flex-direction: column; }
+    .live-main .main-row .nav-left .admin-logo { width: 160px; }
+}
