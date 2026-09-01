@@ -1,7 +1,7 @@
 <?
 // 기본 설정 파일을 불러온다
-include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/config.inc';
-include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/top.inc';
+include_once '../../inc/config.inc' ;
+include_once '../../inc/top.inc' ;
 
 // 교회 선택 조건문
 $church_select = isset ( $_GET['church'] ) ? $_GET['church'] : '';
@@ -44,7 +44,7 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
 <main class="live-main">
     <div class="main-row">
         <div class="nav-left">
-            <? include_once $_SERVER['DOCUMENT_ROOT'].'/live/inc/admin_nav.inc' ?>
+            <? include_once '../../inc/admin_nav.inc' ?>
         </div>
         <div class="nav-right">
             <h4 class="main-title">행사 영상 관리</h4>
@@ -95,7 +95,7 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
                             <td><a type="button" class="use btn btn-sm btn-<?=$row['use'] == 'Y' ? 'success' : 'danger'?>" id="<?=$row['idx']?>"><?=$row['use']?></a></td>
                             <td><a type="button" class="view btn btn-sm btn-<?=$row['view'] == 'Y' ? 'success' : 'danger'?>" id="<?=$row['idx']?>"><?=$row['view']?></a></td>
                             <td><?=$church?></td>
-                            <td><a class="link-dark" href="./live_read.html?idx=<?=$row['idx']?>&church=<?=$row['church']?>"><?=$date[0]?>년 <?=$date[1]?>월 <?=$date[2]?>일(<?=$yoil[date('w', strtotime($row['title']))]?>) <?=$row['worship']?></a></td>
+                            <td><a class="link-dark" href="<?=SITE_LIVE?>/admin/live/live_read.html?idx=<?=$row['idx']?>&church=<?=$row['church']?>"><?=$date[0]?>년 <?=$date[1]?>월 <?=$date[2]?>일(<?=$yoil[date('w', strtotime($row['title']))]?>) <?=$row['worship']?></a></td>
                             <td><?=! empty ( $row['date_update'] ) ? $row['date_update'] : '-'?></td>
                             <td><?=$row['date_insert']?></td>
                         </tr>
@@ -105,18 +105,51 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
                     </tbody>
                 </table>
             </div>
-            <div class="d-grid d-flex justify-content-end">
-                <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#liveaddModal">등록</a>
+            <div class="d-grid d-flex justify-content-end mb-3">
+                <a type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#liveaddModal">등록</a>
             </div>
             <!-- <div class="d-flex justify-content-center mb-5">
                 <div class="me-3"><input type="search" class="form-control" name="link" id="link" placeholder="검색"></div>
                 <div><button type="button" class="btn btn-success" id="search_btn">검색</button></div>
             </div> -->
 
-            <?php
-            include_once __DIR__ . '/../../helpers/pagination_helper.php';
-            echo render_pagination($page, $total_page, $block_start, $block_end, $total);
-            ?>
+            <!-- 페이지네이션 출력 -->
+            <div class="d-grid d-flex justify-content-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item <?=$page == 1 ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item <?=$page == 1 ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=<?=$page-1?>" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+
+                        <? if ( $total > 0 ) : ?>
+                            <? for ( $i = $block_start; $i <= $block_end; $i++ ) : ?>
+                                <li class="page-item <?=$page == $i ? 'active' : ''?>"><a class="page-link" href="?page=<?=$i?>"><?=$i?></a></li>
+                            <? endfor ;?>
+                        <? else : ?>
+                            <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+                        <? endif ; ?>
+
+                        <li class="page-item <?=$page == $total_page ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=<?=$page+1?>" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li class="page-item <?=$page == $total_page ? 'disabled' : ''?>">
+                            <a class="page-link" href="?page=<?=$total_page?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -129,7 +162,8 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="./save_live_list.php">
+                <form method="post" action="<?=SITE_LIVE?>/functions/save_live_list.php">
+                    <?=csrf_field()?>
                     <div class="container">
                         <div class="mb-3 row">
                             <label for="title" class="col-sm-2 col-form-label">교회</label>
@@ -186,7 +220,7 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
 
     // 교회 변경
     $('#church_select').change(function(){
-        location.href = 'http://live.sky0808.net/dev/admin/live_list.html?' + 'church=' + $(this).val();
+        location.href = '<?=SITE_LIVE?>/admin/live/live_list.html?' + 'church=' + $(this).val();
     });
 
     // use
@@ -195,9 +229,9 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
         var useIdx = $(this).attr('id');
 
         $.ajax({
-            type: 'GET',
-            url: './update_use.php',
-            data: {idx: useIdx},
+            type: 'POST',
+            url: '<?=SITE_LIVE?>/functions/update_use.php',
+            data: {idx: useIdx, csrf: '<?=csrf_token()?>'},
             success: function(data) {
                 location.reload();
             }
@@ -217,9 +251,9 @@ $yoil = array ( '일', '월', '화', '수', '목', '금', '토') ;
         var viewIdx = $(this).attr('id');
 
         $.ajax({
-            type: 'GET',
-            url: './update_view.php',
-            data: {idx: viewIdx, view: view},
+            type: 'POST',
+            url: '<?=SITE_LIVE?>/functions/update_view.php',
+            data: {idx: viewIdx, view: view, csrf: '<?=csrf_token()?>'},
             success: function(data) {
                 location.reload();
             }

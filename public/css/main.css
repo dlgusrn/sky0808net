@@ -40,6 +40,14 @@ input[type=text] {
 
 .live-index .login-form .form-signin .login-btn button { border-radius: 10px; background-color: #4568F0; font-weight: 500; }
 
+#popupBackdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 1040; }
+#popupWrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1050; display: flex; justify-content: center; align-items: center; }
+#popup { background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 32px 28px 24px 28px; min-width: 600px; max-width: 90vw; min-height: 350px; max-height: 90vh; overflow: auto; }
+#popup h2 { text-align: left; }
+#popup .contents { min-height: 200px; }
+#popup #popup_btn { text-align: right; }
+
+
 /* 모바일 */
 @media ( max-width: 767px ) {
     .top-menu-index .back_button img { width: 2.778vw; height: 4.444vw; }
@@ -148,6 +156,9 @@ input[type=text] {
     .live-main .main-row .nav-left .admin-logo { width: 110px; margin: 5px; }
     .live-main .main-row .nav-left .nav-menu-mobile .div-mobile-nav a { height: 40px; padding-top: 8px; padding-left: 10px; border-bottom: #4D565C 1px solid; display: block; text-decoration: none; color: #FFFFFF; }
     .live-main .main-row .nav-left .nav-menu-mobile .div-mobile-nav a.nav-side { background-color: #404b53; }
+
+    #popup { padding: 8.889vw 7.778vw 6.667vw 7.778vw; min-width: 90vw; max-width: 90vw; max-height: 90vh; }
+    #popup .contents img { width: 72.222vw }
 }
 
 /* 태블릿 & PC */
@@ -248,4 +259,7 @@ input[type=text] {
     .live-main .main-row .nav-left .nav-menu .video-nav-bottom,
     .live-main .main-row .nav-left .nav-menu .member-nav-bottom { display: flex; flex-direction: column; }
     .live-main .main-row .nav-left .admin-logo { width: 160px; }
+
+    /* #popup .contents {  } */
+    #popup .contents img { width: 100%; }
 }
