@@ -11,6 +11,16 @@ class Admin_filters {
             'notice' => ['table'=>'notice','date'=>'start_date','label'=>'공지 기간','fields'=>['title','contents'],'order'=>'idx DESC','select'=>'idx, enable, DATE(start_date) AS start_date, DATE(end_date) AS end_date, title, insert_date, update_date'],
         ];
     }
+    public static function uses_dates($kind) {
+        return !in_array($kind, ['black_list','admin_list','preacher_list'], true);
+    }
+    public static function for_kind($kind, array $query) {
+        if (!self::uses_dates($kind)) {
+            $query = array_intersect_key($query, array_flip(['page','per_page','q']));
+            $query['range'] = 'custom';
+        }
+        return self::parse($query);
+    }
     private static function scalar(array $query, $key) {
         $value = $query[$key] ?? '';
         if (!is_scalar($value)) throw new InvalidArgumentException('검색 조건을 확인해 주세요.');
@@ -55,11 +65,11 @@ class Admin_filters {
             else $where[]="church IN ('sky','beer')";
         }
         if ($kind==='video_list' && $filters['preacher']!=='') {$where[]='preacher = :preacher';$params['preacher']=$filters['preacher'];}
-        if ($filters['start_date']!=='') {
+        if (self::uses_dates($kind) && $filters['start_date']!=='') {
             $where[]=$kind==='notice'?'end_date >= :date_start':'`'.$spec['date'].'` >= :date_start';
             $params['date_start']=$filters['start_date'];
         }
-        if ($filters['end_date']!=='') {
+        if (self::uses_dates($kind) && $filters['end_date']!=='') {
             $where[]='`'.$spec['date'].'` < DATE_ADD(:date_end, INTERVAL 1 DAY)';
             $params['date_end']=$filters['end_date'];
         }

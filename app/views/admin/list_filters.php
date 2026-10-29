@@ -1,4 +1,20 @@
-<?php require_once __DIR__ . '/../layout/auth.inc'; ?>
+<?php
+require_once __DIR__ . '/../layout/auth.inc';
+require_once __DIR__ . '/../../helpers/Admin_filters.php';
+if (!Admin_filters::uses_dates($list_kind)):
+?>
+<form method="get" action="/admin/<?=e($list_kind)?>" class="admin-list-controls d-flex align-items-end justify-content-between flex-wrap gap-3 mb-3" aria-label="목록 검색">
+    <div><label for="list-per-page" class="form-label">표시 개수</label><select name="per_page" id="list-per-page" class="form-select w-auto">
+        <?php foreach ([10,20,50,100] as $size): ?><option value="<?=$size?>" <?=$page_set===$size?'selected':''?>><?=$size?>개씩 보기</option><?php endforeach; ?>
+    </select></div>
+    <div class="flex-grow-1"><label for="list-keyword" class="form-label">검색어</label><input type="search" id="list-keyword" name="q" class="form-control" value="<?=e($filters['q'])?>" placeholder="이름·닉네임 검색"></div>
+    <div class="d-flex gap-2"><button class="btn btn-primary" type="submit">조회</button><a class="btn btn-outline-secondary" href="/admin/<?=e($list_kind)?>">초기화</a></div>
+    <div class="small text-muted w-100">총 <?=number_format($total)?>건</div>
+</form>
+<script>
+document.getElementById('list-per-page').addEventListener('change',function(){this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit();});
+</script>
+<?php return; endif; ?>
 <form method="get" class="admin-list-filters" aria-label="목록 검색">
     <?php foreach (['church','preacher'] as $key): ?>
         <?php if (($filters[$key]??'')!==''): ?><input type="hidden" name="<?=e($key)?>" value="<?=e($filters[$key])?>"><?php endif; ?>

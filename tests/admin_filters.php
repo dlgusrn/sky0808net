@@ -11,10 +11,13 @@ foreach([['start_date'=>'2026-02-30'],['start_date'=>'2026-11-01','end_date'=>'2
 $f=Admin_filters::parse(['church'=>'sky','preacher'=>'시험설교자','q'=>"%_' OR 1=1",'start_date'=>'2026-10-01','end_date'=>'2026-10-29']);
 foreach(array_keys(Admin_filters::specs())as $kind){
  list($where,$params)=Admin_filters::where($kind,$f);
+
  filter_check(strpos($where,"OR 1=1")===false,'Keyword stays out of SQL');
  filter_check($params['keyword0']==="%=%=_' OR 1==1%",'Literal LIKE escaping');
- filter_check(strpos($where,'DATE_ADD(:date_end, INTERVAL 1 DAY)')!==false,'Inclusive end date');
- filter_check($params['date_start']==='2026-10-01'&&$params['date_end']==='2026-10-29','Bound date parameters');
+ if(Admin_filters::uses_dates($kind)){
+  filter_check(strpos($where,'DATE_ADD(:date_end, INTERVAL 1 DAY)')!==false,'Inclusive end date');
+  filter_check($params['date_start']==='2026-10-01'&&$params['date_end']==='2026-10-29','Bound date parameters');
+ }else{filter_check(!isset($params['date_start'])&&!isset($params['date_end']),'No date restrictions');}
 }
 list($where,$params)=Admin_filters::where('notice',$f);
 filter_check(strpos($where,'end_date >= :date_start')!==false,'Notice period overlap');

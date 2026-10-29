@@ -4,7 +4,7 @@ class Admin_listing extends Model {
     public function page($kind,array $query) {
         $specs=Admin_filters::specs();
         if (!isset($specs[$kind])) throw new InvalidArgumentException('지원하지 않는 목록입니다.');
-        $spec=$specs[$kind];$filters=Admin_filters::parse($query);
+        $spec=$specs[$kind];$filters=Admin_filters::for_kind($kind,$query);
         list($where,$params)=Admin_filters::where($kind,$filters);
         $statement=$this->db->prepare('SELECT COUNT(*) FROM `'.$spec['table'].'`'.$where);
         $statement->execute($params);$total=(int)$statement->fetchColumn();

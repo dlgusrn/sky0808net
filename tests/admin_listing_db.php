@@ -10,5 +10,12 @@ foreach(array_keys(Admin_filters::specs())as $kind){
   $count++;
  }
 }
+foreach(['black_list','admin_list','preacher_list'] as $kind){
+ $all=$model->page($kind,['per_page'=>10]);
+ $stale=$model->page($kind,['per_page'=>20,'range'=>'invalid','q'=>'','start_date'=>'invalid','end_date'=>'1900-01-01','church'=>'invalid']);
+ if($all['total']!==$stale['total']||$stale['page_set']!==20)throw new RuntimeException('Full list affected by stale filters: '.$kind);
+ $matched=$model->page($kind,['q'=>'시험','range'=>'invalid','start_date'=>'invalid']);
+ if($matched['total']>$all['total'])throw new RuntimeException('Keyword search ignored: '.$kind);
+}
 $model->page('video_list',['church'=>'sky','preacher'=>'시험설교자','q'=>'시험','per_page'=>100]);
-echo 'PASS: ',$count+1,' read-only database search/list queries.',PHP_EOL;
+echo 'PASS: ',$count+10,' read-only database search/list queries.',PHP_EOL;
