@@ -8,7 +8,7 @@ fi
 while IFS= read -r -d '' release_file; do
   php -d short_open_tag=1 -l "$release_file" >/dev/null
 done < <(find "$release_root/app" "$release_root/core" "$release_root/config" "$release_root/public" "$release_root/tests" -type f -name '*.php' -print0)
-for release_test in database_settings admin_permissions admin_filters list_controls date_presets pagination notices broadcast_status; do
+for release_test in database_settings admin_permissions admin_filters list_controls date_presets pagination notices broadcast_status youtube_links; do
   php "$release_root/tests/$release_test.php"
 done
 if [[ "${1:-}" == "--database" ]]; then

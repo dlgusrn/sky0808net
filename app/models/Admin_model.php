@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../helpers/Youtube_link.php';
 class Admin_model extends Model {
 
     // 관리자 정보 조회
@@ -126,13 +127,8 @@ class Admin_model extends Model {
         $link     = $_POST['link'] ?? '';
         $passwd   = $_POST['password'] ?? '';
 
-        // 유튜브 링크 파싱 (생략 가능)
-        if (strpos($link, 'youtu.be/') !== false) {
-            $link = str_replace('https://youtu.be/', '', $link);
-        } elseif (strpos($link, 'youtube.com/watch?v=') !== false) {
-            parse_str(parse_url($link, PHP_URL_QUERY), $query);
-            $link = $query['v'] ?? $link;
-        }
+        $link = Youtube_link::video_id($link);
+        if ($link === null) return false;
 
         try {
             if ($type === 'save') {
@@ -346,13 +342,8 @@ class Admin_model extends Model {
         $title    = $_POST['title'] ?? '';
         $link     = $_POST['link'] ?? '';
 
-        // 유튜브 링크 파싱 (생략 가능)
-        if (strpos($link, 'youtu.be/') !== false) {
-            $link = str_replace('https://youtu.be/', '', $link);
-        } elseif (strpos($link, 'youtube.com/watch?v=') !== false) {
-            parse_str(parse_url($link, PHP_URL_QUERY), $query);
-            $link = $query['v'] ?? $link;
-        }
+        $link = Youtube_link::video_id($link);
+        if ($link === null) return false;
 
         try {
             if ($type === 'save') {
