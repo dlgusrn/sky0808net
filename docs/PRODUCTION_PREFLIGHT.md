@@ -13,3 +13,13 @@
 - `EV_del_live_entry`는 3초마다 실행되는 기존 이벤트입니다. 정의와 event_scheduler 상태를 읽기 전용으로 확인하고 변경하지 않습니다.
 
 순서: 운영 코드·Apache·DB 백업 → 읽기 전용 이벤트/컬럼 확인 → 호환 컬럼 적용 검토 → 별도 릴리스/운영 비공개 DB 설정/첨부 복사 → 운영 localhost 전용 사전 검사 → HTTP/HTTPS 전환 후보 검토 → 실제 전환. 아직 운영 설정이나 DB를 변경하지 않았습니다.
+
+## 별도 폴더 준비
+
+`prepare_production.py`는 hostname `sky0808net-235826`만 허용하며 기본 코드/DB/Apache를 변경하지 않습니다. 기존 백업의 gzip 무결성과 SQL 완료 표식, 배포 체크섬·manifest를 검사하고 새 폴더를 만듭니다. 운영 legacy DB 설정을 서버 내부에서 비공개 파일로 가져오고 동일 DB/서버인지 검증합니다. 공지 이미지도 원본 그대로 복사합니다. 기존 이벤트는 조회만 합니다.
+
+```sh
+python3 /root/prepare_production.py /root/sky0808net-COMMIT.tar.gz /root/sky0808-before-mvc-20261029-160025
+```
+
+PHP/권한/검색/공지 테스트와 읽기 전용 DB 검사를 통과하면 `sky0808net-prod-releases/시간-커밋/deployment`에 운영 Apache 원본·전환 후보를 준비합니다. enabled 설정 변경이나 reload는 하지 않습니다. 다음 단계는 localhost 전용 미리보기와 전환 후보 검토입니다. dev용 activate_dev.py를 운영에 사용하면 안 됩니다.

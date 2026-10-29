@@ -4,8 +4,11 @@ import unittest,importlib.util
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('prepare_dev',ROOT/'scripts/release/prepare_dev.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+prod_spec=importlib.util.spec_from_file_location('prepare_production',ROOT/'scripts/release/prepare_production.py')
+prod=importlib.util.module_from_spec(prod_spec);prod_spec.loader.exec_module(prod)
 class DevConfigurationTests(unittest.TestCase):
-    def candidate(self,text):return module.candidate_config(text,Path('/var/www/html/sky0808net'),Path('/var/www/html/sky0808net-releases/test'))
+    generator=staticmethod(module.candidate_config)
+    def candidate(self,text):return self.generator(text,Path('/var/www/html/sky0808net'),Path('/var/www/html/sky0808net-releases/test'))
     def test_http_proxy_is_preserved(self):
         text='<VirtualHost *:80>\nDocumentRoot /var/www/html/sky0808net\nProxyPass /worship/ http://127.0.0.1:8080/\nProxyPass /worship/ws ws://127.0.0.1:8080/ws\nLimitRequestBody 52428800\n</VirtualHost>\n'
         out=self.candidate(text)
@@ -24,4 +27,6 @@ class DevConfigurationTests(unittest.TestCase):
         with self.assertRaises(AssertionError):self.candidate('<VirtualHost *:80>\nDocumentRoot /var/www/html/other\n</VirtualHost>')
     def test_multiple_vhosts_are_rejected(self):
         with self.assertRaises(AssertionError):self.candidate('<VirtualHost *:80>\nDocumentRoot /var/www/html/sky0808net\n</VirtualHost>\n<VirtualHost *:81>\nDocumentRoot /var/www/html/sky0808net\n</VirtualHost>')
+class ProductionConfigurationTests(DevConfigurationTests):
+    generator=staticmethod(prod.candidate_config)
 if __name__=='__main__':unittest.main()
