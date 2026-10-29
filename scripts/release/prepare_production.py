@@ -14,6 +14,8 @@ def candidate_config(text,legacy,destination):
         DirectoryIndex index.php
         Require all granted
         php_flag short_open_tag On
+        php_flag display_errors Off
+        php_flag log_errors On
         php_value upload_max_filesize 5M
         php_value post_max_size 8M
         LimitRequestBody 8388608

@@ -23,3 +23,13 @@ python3 /root/prepare_production.py /root/sky0808net-COMMIT.tar.gz /root/sky0808
 ```
 
 PHP/권한/검색/공지 테스트와 읽기 전용 DB 검사를 통과하면 `sky0808net-prod-releases/시간-커밋/deployment`에 운영 Apache 원본·전환 후보를 준비합니다. enabled 설정 변경이나 reload는 하지 않습니다. 다음 단계는 localhost 전용 미리보기와 전환 후보 검토입니다. dev용 activate_dev.py를 운영에 사용하면 안 됩니다.
+
+## 최종 전환
+
+방송 선택은 `use=Y AND view=Y`를 관리자·일반·상태 조회에 동일하게 적용합니다. 운영 미리보기에서 확인된 과거 영상 표시 문제를 고쳤고, 상태 조합 테스트 및 운영 DB 읽기 전용 비교를 회귀 검사에 포함합니다. 임시 패치된 미리보기 대신 새 커밋의 배포본을 다시 준비합니다.
+
+새 배포본 준비 후 `activate_production.py RELEASE/deployment`로 후보 차이를 확인하고, 승인된 전환은 같은 명령에 `--apply`를 붙여 실행합니다. 스크립트는 hostname·계획·파일 manifest·기존 설정 해시·프록시/인증서 보존을 확인하고 회귀 검사 후 전환합니다. 설정 또는 HTTP 검사 실패 시 기존 vhost를 자동 복원합니다.
+
+전환 중 기존 공지 업로드가 끝나는 경우와 롤백을 대비해 최종 배포본의 `storage/notice`는 **기존 `/var/www/html/sky0808net/live/uploads`를 공유하는 링크**로 연결합니다. 기존 첨부는 덮어쓰지 않고 충돌을 검사하며 준비한 이미지 복사본도 보존합니다. 기존 legacy 폴더를 삭제하지 않습니다. DB 데이터·이벤트는 변경하지 않습니다.
+
+수동 롤백은 `rollback_production.py RELEASE/deployment`입니다. 이후 별도 수정된 Apache 설정은 덮어쓰지 않고 중단합니다. DB 기록은 자동 원복하지 않으며, 업로드 데이터는 공유 폴더에 유지됩니다. HTTP가 실제 사용 경로이며 HTTPS는 기존 인증서를 보존합니다.

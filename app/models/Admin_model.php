@@ -36,7 +36,7 @@ class Admin_model extends Model {
 
     // 교회별 현재 송출중인 예배 정보 가져오기
     public function get_live_worship($church) {
-        $stmt = $this->db->prepare("SELECT * FROM live_list WHERE church = :church AND `view` = 'Y' ORDER BY idx DESC LIMIT 1");
+        $stmt = $this->db->prepare("SELECT * FROM live_list WHERE church = :church AND `use` = 'Y' AND `view` = 'Y' ORDER BY idx DESC LIMIT 1");
         $stmt->execute(['church' => $church]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

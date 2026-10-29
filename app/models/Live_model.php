@@ -35,7 +35,7 @@ class Live_model extends Model {
 
     // 현재 송출 중 여부 확인 (church 기준으로 최근 use='Y' && view='Y' 1건)
     public function get_live_status($church) {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM live_list WHERE church = :church AND `view` = 'Y'");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM live_list WHERE church = :church AND `use` = 'Y' AND `view` = 'Y'");
         $stmt->execute(['church' => $church]);
         return (int)$stmt->fetchColumn();
     }
@@ -68,7 +68,7 @@ class Live_model extends Model {
     // 현재 송출중인 방송 정보 조회
     public function get_active_live($church) {
         $stmt = $this->db->prepare(
-            "SELECT `use`, `view`, `link` FROM live_list WHERE church = :church AND `view` = 'Y' ORDER BY idx DESC LIMIT 1"
+            "SELECT `use`, `view`, `link` FROM live_list WHERE church = :church AND `use` = 'Y' AND `view` = 'Y' ORDER BY idx DESC LIMIT 1"
         );
         $stmt->execute(['church' => $church]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
