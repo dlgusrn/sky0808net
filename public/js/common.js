@@ -1,4 +1,27 @@
 $(document).ready(function(){
+    if (document.body.classList.contains('admin-ui')) {
+        var route = location.pathname.split('/')[2] || 'main';
+        var group = /^(video|event)/.test(route) ? 'video' : /^(admin_|preacher_|saint_)/.test(route) ? 'member' : 'live';
+        ['live', 'video', 'member'].forEach(function (name) {
+            var top = $('.' + name + '-nav-top');
+            var opened = name === group;
+            top.toggleClass('active', opened).attr('aria-expanded', String(opened));
+            $('.' + name + '-nav-bottom .nav-side').toggle(opened);
+            top.on('click', function (event) {
+                event.preventDefault();
+                var expanded = $(this).attr('aria-expanded') !== 'true';
+                top.toggleClass('active', expanded).attr('aria-expanded', String(expanded));
+                $('.' + name + '-nav-bottom .nav-side').stop(true, true).toggle(expanded);
+            });
+        });
+        $('.mobile-nav').on('click', function () {
+            var expanded = $(this).attr('aria-expanded') !== 'true';
+            $(this).attr('aria-expanded', String(expanded));
+            $('.div-mobile-nav').stop(true, true).toggle(expanded);
+        });
+        return;
+    }
+
     // 좌측 메뉴 보이기
     $('.live-nav-top').click(function(){
         $('.live-nav-bottom .nav-side').slideToggle(300);

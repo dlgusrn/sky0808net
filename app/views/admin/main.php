@@ -8,13 +8,14 @@
             <h4 class="main-title">생방송 보기</h4>
             <div class="container-fluid admin-row">
                 <!-- 하늘문 예배 영상 -->
-                <div class="row justify-content-center" id="div_live">
+                <div class="row justify-content-center admin-broadcast" id="sky-broadcast">
                     <h3>하늘문예배</h3>
                     <?php if (($sky_worship && $sky_worship['view'] == 'Y')): ?>
                         <div class="live col-8">
-                            <iframe src="https://www.youtube.com/embed/<?= htmlspecialchars($sky_worship['link']) ?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
+                            <iframe title="하늘문 예배 생방송" src="https://www.youtube.com/embed/<?= htmlspecialchars($sky_worship['link']) ?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
                         </div>
                         <div class="div-live-list col-2">
+                            <span class="admin-viewer-label">실시간 접속자</span>
                             <div class="sky-live-list bg-light" style="overflow-y: scroll;"></div>
                         </div>
                     <?php else: ?>
@@ -33,13 +34,14 @@
                 <div class="center-line"></div>
 
                 <!-- 브엘성회 예배 영상 -->
-                <div class="row justify-content-center" id="div_live" style="margin-bottom: 100px;">
+                <div class="row justify-content-center admin-broadcast" id="beer-broadcast">
                     <h3>브엘성회</h3>
                     <?php if (($beer_worship && $beer_worship['view'] == 'Y')): ?>
                         <div class="live col-8">
-                            <iframe src="https://www.youtube.com/embed/<?= htmlspecialchars($beer_worship['link']) ?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
+                            <iframe title="브엘성회 생방송" src="https://www.youtube.com/embed/<?= htmlspecialchars($beer_worship['link']) ?>" style="border-radius: 15px;" frameborder="0" allowfullscreen></iframe>
                         </div>
                         <div class="div-live-list col-2">
+                            <span class="admin-viewer-label">실시간 접속자</span>
                             <div class="beer-live-list bg-light" style="overflow-y: scroll;"></div>
                         </div>
                     <?php else: ?>

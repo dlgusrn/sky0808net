@@ -31,6 +31,10 @@
         <!-- CSS -->
         <link href="/css/main.css?<?=date('Y-m-d h:i:s')?>" rel="stylesheet">
         <link href="/css/dashboard.css?<?=date('Y-m-d h:i:s')?>" rel="stylesheet">
+        <?php if ($url[1] === 'admin'): ?>
+        <link href="/css/admin.css?v=20261029" rel="stylesheet">
+        <script src="/js/admin-ui.js?v=20261029" defer></script>
+        <?php endif; ?>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
@@ -55,4 +59,4 @@
             }
         </script>
     </head>
-    <body>
+    <body class="<?= $url[1] === 'admin' ? 'admin-ui' : '' ?>">

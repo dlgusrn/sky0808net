@@ -11,16 +11,19 @@
 <main class="live-main">
     <div class="admin-login-form">
         <div class="text-center login-top">
-            <img src="/img/login_logo.png">
+            <img src="/img/login_logo.png" alt="하늘문교회기도원">
             <div><span>관리자 로그인</span></div>
+            <p class="admin-login-description">예배와 방송을 관리하는 공간입니다.</p>
         </div>
         <div class="form-signin">
             <form method="post" action="/admin/admin_login_proc">
                 <div class="">
-                    <input type="text" class="form-control" name="admin_name" id="admin_name" style="ime-mode: active;" placeholder="관리자 이름">
+                    <label for="admin_name">관리자 이름</label>
+                    <input autocomplete="username" type="text" class="form-control" name="admin_name" id="admin_name" style="ime-mode: active;" placeholder="관리자 이름">
                 </div>
                 <div class="">
-                    <input type="password" class="form-control" name="admin_password" id="admin_password" placeholder="관리자 비밀번호">
+                    <label for="admin_password">비밀번호</label>
+                    <input autocomplete="current-password" type="password" class="form-control" name="admin_password" id="admin_password" placeholder="관리자 비밀번호">
                 </div>
                 <div class="checkbox">
                     <input type="checkbox" id="namesave" checked>
