@@ -14,7 +14,7 @@ class Notice_support {
             }
         }
         if ($start > $end) throw new InvalidArgumentException('종료일은 시작일 이후여야 합니다.');
-        if ($title === '' || preg_match('//u', $title) !== 1 || preg_match_all('/./us', $title) > 255) throw new InvalidArgumentException('공지 제목을 확인해 주세요.');
+        if ($title === '' || preg_match('//u', $title) !== 1 || preg_match_all('/./us', $title) > 100) throw new InvalidArgumentException('공지 제목을 확인해 주세요.');
         return ['title' => $title, 'start_date' => $start, 'end_date' => $end,
             'contents' => self::html((string) ($data['contents'] ?? ''))];
     }

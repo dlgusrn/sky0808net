@@ -9,6 +9,9 @@ function notice_check($ok, $label) {
 }
 $data = ['title' => '시험 공지', 'start_date' => '2026-10-29', 'end_date' => '2026-10-30', 'contents' => '<p>한글 <strong>본문</strong></p>'];
 $valid = Notice_support::validate($data);
+notice_check(Notice_support::validate(array_replace($data, ['title'=>str_repeat('가',100)]))['title'] === str_repeat('가',100), '100-character title accepted');
+$tooLong=false;try{Notice_support::validate(array_replace($data,['title'=>str_repeat('가',101)]));}catch(InvalidArgumentException $e){$tooLong=true;}
+notice_check($tooLong,'101-character title rejected for production schema');
 notice_check($valid['title'] === '시험 공지' && strpos($valid['contents'], '한글') !== false, 'Korean content');
 foreach ([['start_date' => '2026-02-30'], ['end_date' => '2026-10-28'], ['title' => ' ']] as $bad) {
     $failed = false;

@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess, sys, io, tarfile, json, hashlib
 root=Path(__file__).resolve().parents[2]
 revision=subprocess.check_output(['git','rev-parse',sys.argv[1] if len(sys.argv)>1 else 'HEAD'],cwd=root,text=True).strip()
-paths=['README.md','app','core','public','config','tests','scripts','docs']
+paths=['README.md','app','core','public','config','tests','scripts','docs','deploy']
 raw=subprocess.check_output(['git','archive','--format=tar',revision,'--']+paths,cwd=root)
 manifest={}
 with tarfile.open(fileobj=io.BytesIO(raw),mode='r:')as source:

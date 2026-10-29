@@ -26,7 +26,7 @@
         <?= csrf_field() ?><input type="hidden" name="idx" id="notice-idx" value="">
         <div class="row mb-3"><div class="col"><label for="notice-start">시작일</label><input type="date" class="form-control" name="start_date" id="notice-start" required></div>
         <div class="col"><label for="notice-end">종료일</label><input type="date" class="form-control" name="end_date" id="notice-end" required></div></div>
-        <div class="mb-3"><label for="notice-title">제목</label><input class="form-control" name="title" id="notice-title" required></div>
+        <div class="mb-3"><label for="notice-title">제목</label><input class="form-control" name="title" id="notice-title" maxlength="100" required></div>
         <div class="mb-3"><label for="notice-contents">공지 내용</label><textarea class="form-control" name="contents" id="notice-contents" rows="9"></textarea></div>
         <div class="mb-3">
             <label for="notice-file-name">첨부 이미지 (JPG·PNG·GIF, 최대 5MB)</label>
