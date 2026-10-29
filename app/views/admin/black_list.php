@@ -6,6 +6,7 @@
         </div>
         <div class="nav-right">
             <h4 class="main-title">블랙리스트 관리</h4>
+            <?php include __DIR__ . '/list_filters.php'; ?>
             <div class="admin-row">
                 <table class="table table-hover text-center">
                     <thead>

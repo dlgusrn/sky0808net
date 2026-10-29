@@ -67,14 +67,16 @@
     setInterval(function() {
         $.ajax({
             type: 'GET',
-            data: {link:link},
+            data: {church: <?=json_encode($church)?>},
+            dataType: 'json',
+            cache: false,
             url: '/live/check_live_list',
             success: function(data) {
                 var live_data = data;
                 if (typeof live_data !== 'object') {
                     try { live_data = JSON.parse(live_data); } catch(e){}
                 }
-                if(live_data.view !== view || live_data.use !== use){
+                if(live_data.view !== view || live_data.use !== use || live_data.link !== link){
                     location.reload();
                 }
                 view = live_data.view;

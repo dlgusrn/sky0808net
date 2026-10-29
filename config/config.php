@@ -1,15 +1,16 @@
 <?php
-// 상수 선언
-define('DB_HOST', 'localhost');
-define('DB_USER', 'sky0808net');
-define('DB_PASS', 'qkdthdtlf08!');
-define('DB_NAME', 'sky0808');
-define('BASE_URL', 'http://live.sky0808.net');
+// Each deployment supplies its own private settings; environment values take priority.
+$databaseSettings = is_file(__DIR__ . '/database.local.php')
+    ? require __DIR__ . '/database.local.php' : [];
+if (!is_array($databaseSettings)) throw new RuntimeException('Invalid database configuration.');
+foreach (['DB_HOST'=>['SKY_DB_HOST','host','localhost'], 'DB_NAME'=>['SKY_DB_NAME','database',''],
+    'DB_USER'=>['SKY_DB_USER','username',''], 'DB_PASS'=>['SKY_DB_PASSWORD','password','']] as $constant=>$setting) {
+    $environment = getenv($setting[0]);
+    define($constant, $environment !== false ? $environment : ($databaseSettings[$setting[1]] ?? $setting[2]));
+}
+unset($databaseSettings, $constant, $setting, $environment);
+define('BASE_URL', getenv('SKY_BASE_URL') ?: 'http://live.sky0808.net');
 date_default_timezone_set('Asia/Seoul');
-
-// 기타 공통 상수 및 환경설정
-define ( 'SITE_WWW' , $_SERVER['HTTP_HOST'] ) ;
-define ( 'SITE_LIVE' , '/live' ) ;
-define ( 'SITE_ADMIN' , '/admin' ) ;
-
-?>
+define('SITE_WWW', $_SERVER['HTTP_HOST'] ?? 'localhost');
+define('SITE_LIVE', '/live');
+define('SITE_ADMIN', '/admin');

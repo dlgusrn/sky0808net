@@ -1,0 +1,142 @@
+/* Admin-only presentation. Existing forms, routes and Bootstrap controls stay intact. */
+html.admin-page, html:has(body.admin-ui) { transform: none; }
+body.admin-ui { --admin-accent: #355cde; --admin-line: #e4e9f1; background: #f5f7fb; color: #25324a; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; line-height: 1.65; }
+.admin-ui a { text-underline-offset: 4px; }
+.admin-ui :is(a, button, input, select, textarea):focus-visible { outline: 3px solid #8ca8ff; outline-offset: 3px; }
+.admin-ui .live-main { min-height: 100vh; }
+.admin-ui .live-main .main-row { display: flex; min-height: 100vh; }
+.admin-ui .live-main .main-row .nav-left { flex: 0 0 248px; background: #17243d; }
+.admin-ui .live-main .main-row .nav-left .nav-menu { position: sticky; top: 0; display: flex; flex-flow: column nowrap; width: 248px; height: 100vh; min-height: 0; overflow-y: auto; padding: 28px 16px 20px; }
+.admin-ui .live-main .main-row .nav-left .admin-logo { width: 154px; height: auto; margin: 0 auto 12px; }
+.admin-ui .admin-brand-caption { display: block; margin: 0 0 32px; color: #a0b0cd; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-align: center; }
+.admin-ui .live-main .main-row .nav-left .nav-menu a:not(:has(img)),
+.admin-ui .live-main .main-row .nav-left .div-mobile-nav a { display: block; width: auto; height: auto; min-height: 44px; margin: 3px 0; padding: 11px 14px; border: 0; border-radius: 8px; color: #bac7df; background: transparent; font-size: 13px; line-height: 1.6; text-decoration: none; }
+.admin-ui .live-main .main-row .nav-left :is(.live-nav-top, .video-nav-top, .member-nav-top) { font-weight: 700; color: #f1f5ff !important; }
+.admin-ui :is(.live-nav-top, .video-nav-top, .member-nav-top)::after { content: '⌄'; float: right; color: #8c9bb8; }
+.admin-ui :is(.live-nav-top, .video-nav-top, .member-nav-top)[aria-expanded='false']::after { content: '›'; }
+.admin-ui .live-main .main-row .nav-left .nav-menu .nav-side { padding-left: 23px; }
+.admin-ui .live-main .main-row .nav-left .nav-menu a:hover,
+.admin-ui .live-main .main-row .nav-left .div-mobile-nav a:hover { background: #233552; color: #fff; }
+.admin-ui .live-main .main-row .nav-left a[aria-current='page'] { color: #fff !important; background: #355cde !important; font-weight: 600; }
+.admin-ui .live-main .main-row .nav-left .nav-menu .nav-logout { margin-top: auto; border-top: 1px solid #30405b; border-radius: 0; padding-top: 20px; }
+.admin-ui .live-main .main-row .nav-right { flex: 1; min-width: 0; padding: 40px clamp(20px, 3vw, 52px) 64px; }
+.admin-ui .admin-eyebrow { margin: 0 0 8px; color: #718099; font-size: 11px; letter-spacing: 1.4px; font-weight: 600; }
+.admin-ui .live-main .nav-right .main-title { margin: 0 0 28px; color: #17243d; font-size: 27px; font-weight: 700; letter-spacing: -1px; }
+.admin-ui .live-main .nav-right .admin-row { padding: 0; margin: 0 0 20px; }
+.admin-ui .admin-table-scroll { width: 100%; overflow-x: auto; background: white; border: 1px solid var(--admin-line); border-radius: 12px; margin-bottom: 20px; }
+.admin-ui .table { min-width: 680px; margin: 0; color: #43516a; background: #fff; font-size: 13px; vertical-align: middle; }
+.admin-ui .live-main .main-row .nav-right .table > :not(caption) > * > * { padding: 17px 14px; border-bottom-color: #edf0f5; }
+.admin-ui .table thead th { background: #f9fafd; color: #68758b; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.admin-ui .table tbody tr:last-child td { border-bottom: 0; }
+.admin-ui .table-hover tbody tr:hover { --bs-table-accent-bg: #f5f8ff; }
+.admin-ui .table .link-dark { color: #263d65; text-decoration: none; font-weight: 500; }
+.admin-ui .table .link-dark:hover { color: var(--admin-accent); text-decoration: underline; }
+.admin-ui .btn { padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; box-shadow: none; }
+.admin-ui .btn-primary { background: var(--admin-accent); border-color: var(--admin-accent); }
+.admin-ui .btn-primary:hover { background: #2448bd; border-color: #2448bd; }
+.admin-ui .btn-danger { color: #b74451; background: #fff1f2; border-color: #f3d8dd; }
+.admin-ui .btn-danger:hover { background: #ffe1e6; }
+.admin-ui .btn-success { color: #167554; background: #e8f6ef; border-color: #cdeadd; }
+.admin-ui .btn-success:hover { background: #d3efdf; }
+.admin-ui .btn-sm { padding: 4px 11px; min-width: 33px; border-radius: 6px; font-size: 12px; }
+.admin-ui :is(.form-control, .form-select) { min-height: 43px; border-color: #dce3ed; border-radius: 8px; font-size: 13px; color: #25324a; }
+.admin-ui :is(.form-control, .form-select):focus { border-color: #8ca5ef; box-shadow: 0 0 0 3px #355cde15; }
+.admin-ui .form-select-sm { min-height: 32px; font-size: 12px; }
+.admin-ui .col-form-label, .admin-ui .form-check-label { color: #56647a; font-size: 13px; }
+.admin-ui .form-check-input:checked { background-color: var(--admin-accent); border-color: var(--admin-accent); }
+.admin-ui .nav-right > form { background: #fff; border: 1px solid var(--admin-line); padding: 28px; border-radius: 12px; }
+.admin-ui .nav-right > form .container { max-width: none; padding: 0; }
+.admin-ui .modal-content { border: 0; border-radius: 16px; box-shadow: 0 24px 80px #17243d33; }
+.admin-ui .modal-header { padding: 22px 26px; border-color: var(--admin-line); }
+.admin-ui .modal-title { font-size: 18px; font-weight: 700; }
+.admin-ui .modal-body { padding: 26px; }
+.admin-ui .page-link { color: #60708b; border-color: var(--admin-line); padding: 8px 14px; }
+.admin-ui .page-item.active .page-link { background: var(--admin-accent); border-color: var(--admin-accent); }
+.admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast { margin: 0 0 24px !important; padding: 24px; border: 1px solid var(--admin-line); border-radius: 14px; background: #fff; gap: 20px; justify-content: flex-start !important; }
+.admin-ui .live-main .main-row .nav-right .admin-row h3 { flex: 0 0 100%; margin: 0; font-size: 17px; font-weight: 700; }
+.admin-ui .live-main .main-row .nav-right .admin-row .live { flex: 1; width: auto; height: auto; min-width: 0; padding: 0; margin: 0; }
+.admin-ui .live-main .main-row .nav-right .admin-row .live iframe { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 10px; }
+.admin-ui .live-main .main-row .nav-right .admin-row .notify { width: 100%; height: auto; min-height: 240px; margin: 0; padding: 32px 16px; background: #f6f8fc; color: #7b879b; font-size: 16px; line-height: 1.9; font-weight: 400; }
+.admin-ui .live-main .main-row .nav-right .admin-row .div-live-list { flex: 0 0 180px; width: 180px; height: auto; margin: 0; padding: 0; }
+.admin-ui .admin-viewer-label { display: block; margin-bottom: 10px; font-size: 12px; font-weight: 600; color: #63718a; }
+.admin-ui .live-main .main-row .nav-right .admin-row :is(.sky-live-list, .beer-live-list) { width: 100%; height: 230px; padding: 14px; border-radius: 8px; font-size: 13px; line-height: 2; background: #f6f8fc !important; }
+.admin-ui .live-main .main-row .nav-right .admin-row .center-line { display: none; }
+.admin-ui .live-main .admin-login-form { width: min(440px, calc(100% - 32px)); margin: 0 auto; padding: 40px; background: #fff; border: 1px solid var(--admin-line); border-radius: 18px; box-shadow: 0 14px 50px #25324a08; }
+.admin-ui .live-main:has(.admin-login-form) { display: grid; align-items: center; padding: 40px 0; }
+.admin-ui .live-main .admin-login-form .login-top { margin-bottom: 32px; }
+.admin-ui .live-main .admin-login-form .login-top img { width: 90px; height: auto; margin: 0 0 24px; }
+.admin-ui .live-main .admin-login-form .login-top span { font-size: 25px; font-weight: 700; letter-spacing: -1px; line-height: 1.4; }
+.admin-ui .admin-login-description { margin: 10px 0 0; color: #8390a4; font-size: 13px; }
+.admin-ui .live-main .admin-login-form .form-signin { width: 100%; margin: 0; }
+.admin-ui .live-main .admin-login-form .form-signin input:is([type='text'], [type='password']) { width: 100%; height: 50px; margin: 8px 0 20px; padding: 12px 14px; }
+.admin-ui .live-main .admin-login-form .form-signin .checkbox { display: flex; align-items: center; gap: 8px; height: auto; margin-bottom: 24px; color: #63718a; }
+.admin-ui .live-main .admin-login-form .form-signin input[type='checkbox'] { width: 16px; height: 16px; accent-color: var(--admin-accent); }
+.admin-ui .live-main .admin-login-form .form-signin .login-btn button { width: 100%; height: 50px; font-size: 14px; border-radius: 8px; background: var(--admin-accent); }
+@media (min-width: 768px) { .admin-ui .live-main .main-row .nav-left .nav-menu-mobile { display: none; } }
+@media (max-width: 1100px) and (min-width: 768px) { .admin-ui .live-main .main-row .nav-left { flex-basis: 220px; } .admin-ui .live-main .main-row .nav-left .nav-menu { width: 220px; } }
+@media (max-width: 767px) {
+ .admin-ui .live-main .main-row { display: block; }
+ .admin-ui .live-main .main-row .nav-left { position: sticky; top: 0; z-index: 1030; }
+ .admin-ui .live-main .main-row .nav-left .nav-menu { display: none; }
+ .admin-ui .live-main .main-row .nav-left .nav-menu-mobile { display: block; }
+ .admin-ui .navbar { min-height: 66px; background: #17243d !important; padding: 12px 18px !important; }
+ .admin-ui .live-main .main-row .nav-left .navbar .admin-logo { width: 124px; margin: 0; }
+ .admin-ui .navbar .navbar-toggler { top: 12px; right: 16px; }
+ .admin-ui .div-mobile-nav { max-height: calc(100dvh - 66px); overflow-y: auto; padding: 8px 16px 16px; }
+ .admin-ui .live-main .main-row .nav-right { padding: 26px 16px 40px; }
+ .admin-ui .live-main .nav-right .main-title { font-size: 23px; margin: 0 0 22px; }
+ .admin-ui .nav-right > form { padding: 20px 16px; }
+ .admin-ui .nav-right > form .row > :is(.col-2, .col-3) { width: 100%; }
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast { padding: 18px; gap: 16px; flex-direction: column; }
+ .admin-ui .live-main .main-row .nav-right .admin-row .live { width: 100%; }
+ .admin-ui .live-main .main-row .nav-right .admin-row .div-live-list { flex: auto; width: 100%; }
+ .admin-ui .live-main .main-row .nav-right .admin-row :is(.sky-live-list, .beer-live-list) { height: 150px; }
+ .admin-ui .live-main .main-row .nav-right .admin-row .notify { min-height: 180px; font-size: 14px; }
+ .admin-ui .live-main .admin-login-form { padding: 32px 24px; }
+ .admin-ui .modal-body { padding: 20px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .admin-ui *, .admin-ui *::before, .admin-ui *::after { transition: none !important; scroll-behavior: auto !important; } }
+
+/* Detail views share the same form surface as edit pages. */
+.admin-ui .live-main .nav-right .container-md.admin-row { padding: 24px; background: #fff; border: 1px solid var(--admin-line); border-radius: 12px; }
+@media (max-width: 767px) {
+ .admin-ui .live-main .nav-right .container-md.admin-row { padding: 20px 16px; }
+ .admin-ui .live-main .nav-right .container-md.admin-row .row > * { padding-right: 12px; padding-left: 12px; }
+}
+
+/* Official church identity and shared list controls. */
+.admin-ui .live-main .main-row .nav-left .nav-menu>.text-center>a{display:block;background:#fff;border-radius:10px;padding:4px 10px}
+.admin-ui .live-main .main-row .nav-left .nav-menu>.text-center .admin-logo{display:block;width:100%;max-width:210px;height:auto;margin:0 auto}
+.admin-ui .live-main .admin-login-form .login-top img{display:block;width:100%;max-width:220px;height:auto;margin:0 auto 16px}
+.admin-ui .nav-right>form.admin-list-filters{display:grid;grid-template-columns:145px 160px 160px minmax(150px,1fr) auto;gap:14px;align-items:end;padding:20px;margin:0 0 20px;box-shadow:none}
+.admin-ui .admin-list-filters label{display:block;margin-bottom:6px;color:#63718a;font-size:12px}
+.admin-ui .admin-search-actions{display:flex;gap:8px;white-space:nowrap}
+.admin-ui .admin-list-count{grid-column:1/-1;color:#63718a;font-size:12px}
+@media(max-width:1250px){.admin-ui .nav-right>form.admin-list-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-ui .admin-search-term{grid-column:1/3}}
+@media(max-width:767px){
+ .admin-ui .nav-right>form.admin-list-filters{grid-template-columns:repeat(2,minmax(0,1fr));padding:16px;gap:12px}
+ .admin-ui .admin-search-term{grid-column:1/-1}.admin-ui .admin-search-actions{grid-column:1/-1}
+ .admin-ui .navbar>a{background:#fff;border-radius:6px;padding:0 8px}
+ .admin-ui .live-main .main-row .nav-left .navbar .admin-logo{width:140px;height:auto;margin:0}
+}
+
+.admin-ui .admin-date-presets{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.admin-ui .admin-date-presets>span{font-size:12px;color:#63718a;margin-right:4px}
+.admin-ui .admin-date-presets .btn{padding:6px 12px;min-height:34px}
+
+/* Match the entire viewer panel to the video on desktop; list scroll stays inside. */
+@media (min-width: 768px) {
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast {
+  display:grid;grid-template-columns:minmax(0,1fr) 180px;align-items:stretch;
+ }
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast>h3,
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast>.notify {grid-column:1/-1}
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast>.live {grid-column:1;width:100%;min-width:0}
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast>.div-live-list {
+  grid-column:2;display:flex;flex-direction:column;align-self:stretch;width:180px;min-height:0;overflow:hidden;
+ }
+ .admin-ui .admin-broadcast .admin-viewer-label {flex:0 0 auto}
+ .admin-ui .live-main .main-row .nav-right .admin-row .admin-broadcast :is(.sky-live-list,.beer-live-list) {
+  flex:1 1 0;height:0;min-height:0;overflow-y:auto!important;overscroll-behavior:contain;
+ }
+}

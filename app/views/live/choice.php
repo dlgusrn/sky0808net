@@ -1,4 +1,5 @@
 <?php include_once __DIR__ . '/../layout/header.php'; ?>
+<?php include __DIR__ . '/notice_popup.php'; ?>
 <nav class="top-menu">
     <div class="username-span">
         <div class="accessor">

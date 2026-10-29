@@ -1,36 +1,32 @@
-# 예배 생방송 시청 페이지
+# 하늘문 예배 생방송 MVC
 
-### 제가 21년째 섬기고 있는 교회 예배 생방송을 시청하기 위해 제작된 Youtube Viewer와 게시판 형태의 웹 사이트 입니다.
+PHP MVC 기반 예배 생방송·다시보기 및 관리자 서비스입니다. 웹 루트는 저장소의 `public/`입니다.
 
-##### 처음에는 SOOP(전 아프리카TV), 이후에는 카카오TV를 통해 예배 생방송을 송출하던 중 카카오TV가 2024년 2월 서비스를 종료함에 따라 예배 생방송을 유튜브로 송출을 하게 되었는데 유튜브로 송출을 하게 되면 예배 이력 관리, 접속자 관리, 방송 비밀번호 설정 등에 어려움이 있어 생방송 관리용 웹 페이지를 개발하게 되었습니다.
+## 주요 기능
 
-##### 현재 PHP 기반으로 개발되어 있으나 이후에는 Java/Springboot로 변경하려고 준비중이며, 웹 기반 안드로이드/iOS 앱 출시까지 계획하고 있습니다.
+- 일반 로그인·교회별 생방송·상태 자동 반영
+- 실시간 접속자와 입장/퇴장 이력
+- 관리자 서버 권한 검사, 계정·블랙리스트·설교자 관리
+- 방송 링크·다시보기 관리
+- 공지사항·이미지 첨부·기간 노출·하루 숨기기
+- 목록 10/20/50/100개 보기, 기간 프리셋/직접 날짜/검색어, 조건 유지 및 5페이지 묶음 이동
+- 공식 로고와 PC/모바일 관리자 UI
 
-### 개발환경
-- HTML
-- CSS
-- JavaScript
-- Bootstrap 5.1.3
-- jQuery 3.6.0
-- PHP 7.4.3
-- MySQL 8.0.42
-- Apache 2.4.41
-- Ubuntu 20.04 LTS
+## 실행 환경과 설정
 
-### Version info (최신순)
-- (현재) v2.1.0 :
-  - 레거시 방식의 구조적 한계로 MVC 방식 적용
-  - 영상 다시보기 페이지 추가
-- v2.0.0 :
-  - 생방송 보기 페이지 UI/UX 변경
-  - 관리자 페이지 분리
-  - 실시간으로 표시되는 생방송 접속자 목록
-  - 방송 상태를 변경하면 생방송 화면 자동 새로고침 및 상태 변경
-- v1.0.0 :
-  - Bootstrap을 이용하여 UI 구성
-  - 로그인 화면 구축
-  - 시청자/관리자를 비밀번호로 구분하여 관리자에게만 생방송 관리 페이지 접근 메뉴 노출
-  - 게시판 형태의 생방송 링크 관리 페이지 구축
+dev에서 Apache 2.4, mod_php 7.4, MySQL로 검증했습니다. rewrite·PDO MySQL·DOM·fileinfo 확장이 필요합니다. Apache의 DocumentRoot를 `public/`으로 지정하고 `.htaccess`를 허용합니다. 기존 일부 뷰는 short_open_tag를 사용하므로 사이트 범위에서 활성화합니다.
 
-### 사이트 주소
-- URL : http://live.sky0808.net/
+DB 설정은 `config/database.local.php.example`을 참고해 서버의 `config/database.local.php`에 작성하거나 `SKY_DB_HOST`, `SKY_DB_NAME`, `SKY_DB_USER`, `SKY_DB_PASSWORD` 환경 변수로 공급합니다. 비공개 설정·업로드는 Git에 넣지 않습니다.
+
+공지 이미지는 `storage/notice`에 저장하며 PHP 프로세스의 쓰기 권한이 필요합니다. 첨부 최대 5MB를 위해 사이트의 PHP 업로드 한도 5M, POST 한도 8M을 사용합니다.
+
+## 검사 및 dev 릴리스
+
+```sh
+bash scripts/release/check.sh
+# dev DB에 읽기 전용 검색 검사도 수행:
+bash scripts/release/check.sh --database
+python3 scripts/release/build.py
+```
+
+실제 dev 기본 주소 전환·검증·롤백은 [DEV_RELEASE.md](docs/DEV_RELEASE.md)를 따릅니다. 개발 중 localhost:18080에서 수행한 검증과 기본 80/443 전환 검증은 구분합니다. 운영 배포는 dev 기본 주소 검증 후 진행합니다.

@@ -10,6 +10,7 @@ $subt = 0;
         </div>
         <div class="nav-right">
             <h4 class="main-title">생방송 접속 이력</h4>
+            <?php include __DIR__ . '/list_filters.php'; ?>
             <table class="table table-hover text-center">
                 <thead>
                     <tr>
@@ -21,6 +22,7 @@ $subt = 0;
                     </tr>
                 </thead>
                 <tbody>
+                    <?php if (!$list): ?><tr><td colspan="5">데이터가 없습니다.</td></tr><?php endif; ?>
                     <?php foreach ($list as $row): ?>
                     <tr>
                         <td width="100"><?= $num - ($page_set * ($page - 1)) - $subt ?></td>

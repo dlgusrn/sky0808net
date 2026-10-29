@@ -8,7 +8,8 @@ class User extends Controller {
             exit;
         }
         // 로그인 된 경우 예배 선택 페이지 출력
-        $this->view('live/choice');
+        header('Location: /live/choice');
+        exit;
     }
 
     public function login() {
@@ -62,7 +63,7 @@ class User extends Controller {
 
         // 로그아웃 기록 및 방송 나가기 처리
         if ($user_name) {
-            $user_model->updateLogoutHistory($user_name);
+            $user_model->updateLogoutHistory($user_name, $_SESSION['live_history_idx'] ?? null);
             $user_model->delete_live_entry($user_name);
         }
 

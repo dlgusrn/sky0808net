@@ -41,15 +41,28 @@ class Live_model extends Model {
     }
 
     // 실시간 접속 기록 저장
-    public function save_live_entry($church, $user_name) {
-        $sql = "INSERT INTO live_entry (`session`, `church`, `name`, `branch`, `date_insert`) 
-                VALUES (:session, :church, :name, 'MEMBER', NOW())";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'session' => session_id(),
-            'church' => $church,
-            'name' => $user_name
-        ]);
+    public function save_live_entry($church, $user_name, $previous_history_idx = null) {
+        $this->db->beginTransaction();
+        try {
+            // 재입장 시 현재 세션의 이전 이력만 종료한다.
+            if ($previous_history_idx) {
+                $stmt = $this->db->prepare("UPDATE live_history SET logout_date = NOW() WHERE idx = :idx AND name = :name AND branch = 'MEMBER' AND logout_date IS NULL");
+                $stmt->execute(['idx' => $previous_history_idx, 'name' => $user_name]);
+            }
+            $stmt = $this->db->prepare("INSERT INTO live_history (branch, name, login_date) VALUES ('MEMBER', :name, NOW())");
+            $stmt->execute(['name' => $user_name]);
+            $history_idx = (int) $this->db->lastInsertId();
+
+            $stmt = $this->db->prepare("DELETE FROM live_entry WHERE session = :session AND name = :name AND branch = 'MEMBER'");
+            $stmt->execute(['session' => session_id(), 'name' => $user_name]);
+            $stmt = $this->db->prepare("INSERT INTO live_entry (session, church, name, branch, date_insert, date_update) VALUES (:session, :church, :name, 'MEMBER', NOW(), NOW())");
+            $stmt->execute(['session' => session_id(), 'church' => $church, 'name' => $user_name]);
+            $this->db->commit();
+            return $history_idx;
+        } catch (Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     // 현재 송출중인 방송 정보 조회
@@ -69,6 +82,21 @@ class Live_model extends Model {
     }
 
     // name + branch 기준으로 세션 정보 갱신
+    public function refresh_live_entry($church, $user_name) {
+        $params = ['session' => session_id(), 'name' => $user_name];
+        $stmt = $this->db->prepare("SELECT idx FROM live_entry WHERE session = :session AND name = :name AND branch = 'MEMBER' LIMIT 1");
+        $stmt->execute($params);
+        $entry = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($entry) {
+            $stmt = $this->db->prepare("UPDATE live_entry SET date_update = NOW() WHERE idx = :idx");
+            $stmt->execute(['idx' => $entry['idx']]);
+        } else {
+            // 시간 만료로 정리된 접속자만 복구하며 이력은 추가하지 않는다.
+            $stmt = $this->db->prepare("INSERT INTO live_entry (session, church, name, branch, date_insert, date_update) VALUES (:session, :church, :name, 'MEMBER', NOW(), NOW())");
+            $stmt->execute($params + ['church' => $church]);
+        }
+    }
+
     public function update_live_session($name, $branch, $session_id) {
         $stmt = $this->db->prepare(
             "UPDATE live_entry 

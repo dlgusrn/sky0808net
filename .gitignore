@@ -1,0 +1,16 @@
+# Local IDE and operating-system files (already tracked files are left untouched).
+.DS_Store
+.idea/
+__pycache__/
+*.pyc
+
+# Runtime/private data and development snapshots.
+/config/database.local.php
+/storage/
+/.migration-backups/
+/dist/
+/public/admin-*-preview.html
+/public/*-check-*.php
+
+# One-time dev patch handoffs; final application source is versioned instead.
+/tools/*.py

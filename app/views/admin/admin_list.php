@@ -6,6 +6,7 @@
         </div>
         <div class="nav-right">
             <h4 class="main-title">관리자 관리</h4>
+            <?php include __DIR__ . '/list_filters.php'; ?>
             <div class="admin-row">
                 <table class="table table-hover text-center">
                     <thead>
@@ -72,6 +73,12 @@
             </div>
             <div class="modal-body">
                 <form method="post" action="/admin/set_admin">
+                <?php if (array_key_exists('notice', $_SESSION['admin_info'] ?? [])): ?>
+                <div class="form-check form-switch mb-3">
+                    <input type="checkbox" class="form-check-input" name="notice" id="notice-permission" checked>
+                    <label class="form-check-label" for="notice-permission">공지사항 관리</label>
+                </div>
+                <?php endif; ?>
                     <div class="container">
                         <div class="row mb-4">
                             <div class="col-3">
@@ -155,6 +162,7 @@
     // 레벨별 권한 자동 제어
     $('select[name=level]').change(function () {
         const level = $(this).val();
+        $('#notice-permission').prop('checked', level !== '4');
 
         const setAccess = (ids, checked) => {
             ids.forEach(id => $('#' + id).prop('checked', checked));

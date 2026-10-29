@@ -11,7 +11,7 @@
 <main class="live-main">
     <div class="admin-login-form">
         <div class="text-center login-top">
-            <img src="/img/login_logo.png" alt="하늘문교회기도원">
+            <img src="/img/church-logo.png?v=1" alt="하늘문교회기도원">
             <div><span>관리자 로그인</span></div>
             <p class="admin-login-description">예배와 방송을 관리하는 공간입니다.</p>
         </div>

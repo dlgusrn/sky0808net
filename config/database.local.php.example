@@ -1,0 +1,8 @@
+<?php
+// Copy to database.local.php on the server. Do not commit the filled-in file.
+return [
+    'host' => 'localhost',
+    'database' => 'YOUR_DATABASE',
+    'username' => 'YOUR_DATABASE_USER',
+    'password' => 'YOUR_DATABASE_PASSWORD',
+];

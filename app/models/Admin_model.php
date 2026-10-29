@@ -441,9 +441,10 @@ class Admin_model extends Model {
             if ($data['password'] !== $data['password_check']) {
                 return ['success' => false, 'message' => '비밀번호가 일치하지 않습니다.'];
             }
-            $password = hash("sha256", $data['password']);
+            $password = password_hash($data['password'], PASSWORD_DEFAULT);
         }
 
+        $has_notice = (bool) $this->db->query("SHOW COLUMNS FROM member_admin LIKE 'notice'")->fetch();
         // 권한 설정
         $live_manage  = isset($data['live_manage'])  ? 'Y' : 'N';
         $live_list    = isset($data['live_list'])    ? 'Y' : 'N';
@@ -466,6 +467,11 @@ class Admin_model extends Model {
                             :black_list, :video_list, :event_video,
                             NOW()
                         )";
+                if ($has_notice) {
+                    $notice_flag = isset($data['notice']) ? 'Y' : 'N';
+                    $sql = str_replace('insert_date', 'notice, insert_date', $sql);
+                    $sql = str_replace('NOW()', "'" . $notice_flag . "', NOW()", $sql);
+                }
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([
                     'username'     => $data['username'],
@@ -513,6 +519,10 @@ class Admin_model extends Model {
                 }
 
                 $sql .= " WHERE idx = :idx";
+                if ($has_notice) {
+                    $sql = str_replace('update_date = NOW()', 'notice = :notice, update_date = NOW()', $sql);
+                    $params['notice'] = isset($data['notice']) ? 'Y' : 'N';
+                }
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute($params);
             }

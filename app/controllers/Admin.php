@@ -2,11 +2,133 @@
 class Admin extends Controller {
     protected $admin_model;
 
+
+    private function denyAdminAccess($status, $message) {
+        http_response_code($status);
+        header('Cache-Control: no-store');
+        $xhr = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest';
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        if ($xhr || strpos($accept, 'application/json') !== false) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => $message]);
+            exit;
+        }
+        header('Content-Type: text/html; charset=utf-8');
+        $target = $status === 401 ? '/admin/login' : '/admin/main';
+        $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+        echo '<!doctype html><html lang="ko"><meta charset="utf-8"><title>관리자 로그인 안내</title><body>';
+        if ($status === 403 &&
+            preg_match('~^admin/(?:main)?/?$~i', trim((string) ($_GET['url'] ?? ''), '/'))) {
+            // main itself is forbidden: keep the denial page instead of a redirect loop.
+            echo '<script>alert(' . json_encode($message, $flags) . ');</script>';
+        } else {
+            echo '<script>alert(' . json_encode($message, $flags) . ');location.replace(' . json_encode($target, $flags) . ');</script>';
+        }
+        echo '<p>' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+        echo '<a href="' . htmlspecialchars($target, ENT_QUOTES, 'UTF-8') . '">돌아가기</a></body></html>';
+        exit;
+    }
+
+    private function renderAdminList($kind) {
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_once __DIR__ . '/../helpers/pagination_helper.php';
+        try {
+            $data = $this->model('Admin_listing')->page($kind, $_GET);
+        } catch (InvalidArgumentException $error) {
+            http_response_code(422);
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<script>alert(' . json_encode($error->getMessage(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');history.back();</script>';
+            exit;
+        }
+        if ($kind === 'live_list') {
+            $data['pass_row'] = $this->admin_model->get_last_password();
+            $data['yoil'] = ['일','월','화','수','목','금','토'];
+        } elseif ($kind === 'video_list') {
+            $data['video_list'] = $data['list'];
+            $data['preacher_list'] = $this->admin_model->get_preacher_select_list();
+            $data['yoil'] = ['일','월','화','수','목','금','토'];
+        } elseif ($kind === 'admin_list') {
+            $data['admin_list'] = $data['list'];
+        } elseif ($kind === 'preacher_list') {
+            $data['preacher_list'] = $data['list'];
+        }
+        $this->view('admin/' . $kind, $data);
+    }
+
+    private function authorizeAdmin($action) {
+        header('Cache-Control: no-store');
+        if (in_array($action, ['login', 'admin_login_proc'], true)) return;
+        $name = $_SESSION['admin_user_name'] ?? '';
+        $admin = is_string($name) && $name !== ''
+            ? $this->admin_model->get_admin_by_name($name) : false;
+        if (!$admin) {
+            unset($_SESSION['admin_user_name'], $_SESSION['admin_info']);
+            $this->denyAdminAccess(401, '관리자 로그인이 필요합니다.');
+        }
+        // 로그인 당시 캐시 대신 현재 DB 권한으로 메뉴와 요청을 함께 검사한다.
+        $_SESSION['admin_info'] = $admin;
+        require_once __DIR__ . '/../helpers/Admin_access.php';
+        if (!Admin_access::allows($action, $admin)) {
+            $this->denyAdminAccess(403, '접근 권한이 없습니다.');
+        }
+    }
+
     public function __construct() {
         $this->admin_model = $this->model('Admin_model');
     }
     
+    public function notice() {
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('notice');
+    }
+
+    public function get_notice() {
+        $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+        $row = $this->model('Notice_model')->find(input_int('idx', $_GET));
+        if (!$row) { http_response_code(404); echo json_encode(['message' => '공지사항을 찾을 수 없습니다.']); exit; }
+        $row['contents'] = Notice_support::html((string) $row['contents']);
+        $row['attachment_url'] = $row['attached'] ? '/live/notice_attachment?idx=' . (int) $row['idx'] : '';
+        echo json_encode($row);
+        exit;
+    }
+
+    public function set_notice() {
+        $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        $idx = empty($_POST['idx']) ? null : input_int('idx', $_POST);
+        try {
+            $this->model('Notice_model')->save($idx, $_POST, $_FILES['attached'] ?? null);
+            header('Location: /admin/notice');
+        } catch (Throwable $error) {
+            $message = $error instanceof InvalidArgumentException ? $error->getMessage() : '저장하지 못했습니다. 서버 로그를 확인해 주세요.';
+            error_log('Notice save failed: ' . $error->getMessage());
+            http_response_code($error instanceof InvalidArgumentException ? 422 : 500);
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<script>alert(' . json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ');history.back();</script>';
+        }
+        exit;
+    }
+
+    public function update_enable() {
+        $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+        $row = $this->model('Notice_model')->toggle(input_int('idx', $_POST));
+        if (!$row) { http_response_code(404); echo json_encode(['message' => '공지사항을 찾을 수 없습니다.']); exit; }
+        echo json_encode(['success' => true, 'enable' => $row['enable']]);
+        exit;
+    }
+
     public function index() {
+        $this->authorizeAdmin(__FUNCTION__);
         // 세션이 없으면 로그인 페이지로 이동
         if (!isset($_SESSION['admin_user_name'])) {
             header("Location: /admin/login");
@@ -14,7 +136,7 @@ class Admin extends Controller {
         }
 
         // 로그인 된 경우 관리자 페이지 출력
-        $this->view('admin/main');
+        $this->main();
     }
 
 /** ===================================================================================== */
@@ -22,6 +144,7 @@ class Admin extends Controller {
     /** 로그인 관련 함수 */
 
     public function login() {
+        $this->authorizeAdmin(__FUNCTION__);
         if (isset($_SESSION['admin_user_name'])) {
             header("Location: /admin/main");
             exit;
@@ -32,6 +155,7 @@ class Admin extends Controller {
     }
 
     public function admin_login_proc() {
+        $this->authorizeAdmin(__FUNCTION__);
         $admin_name = $_POST['admin_name'] ?? '';
         $admin_password = $_POST['admin_password'] ?? '';
 
@@ -55,8 +179,10 @@ class Admin extends Controller {
             echo "<script>alert('일치하는 정보가 없습니다.'); history.back();</script>";
             exit;
         }
-        $password = hash("sha256", $admin_password);
-        if ($password !== $row['password']) {
+        $stored_password = (string) $row['password'];
+        $valid_password = password_verify($admin_password, $stored_password)
+            || hash_equals($stored_password, hash('sha256', $admin_password));
+        if (!$valid_password) {
             $this->admin_model->system_log('INFO', "[로그인 실패] 입력한 비밀번호가 일치하지 않음. 입력된 관리자 이름 : $admin_name");
             echo "<script>alert('일치하는 정보가 없습니다.'); history.back();</script>";
             exit;
@@ -66,6 +192,7 @@ class Admin extends Controller {
         $admin_info = $this->admin_model->get_admin_by_name($admin_name);
 
         // 세션 생성
+        session_regenerate_id(true);
         $_SESSION['admin_user_name'] = $admin_name;
         $_SESSION['admin_info'] = $admin_info;
 
@@ -82,6 +209,7 @@ class Admin extends Controller {
     }
 
     public function admin_logout_proc() {
+        $this->authorizeAdmin(__FUNCTION__);
         $admin_user_name = $_SESSION['admin_user_name'] ?? null;
 
         if ($admin_user_name) {
@@ -89,7 +217,7 @@ class Admin extends Controller {
             $this->admin_model->delete_live_entry($admin_user_name);
 
             // 로그아웃 로그 기록
-            $this->admin_model->system_log('INFO', "[로그아웃] 관리자 : $admin_name.");
+            $this->admin_model->system_log('INFO', "[로그아웃] 관리자 : $admin_user_name.");
 
             // 세션 삭제
             unset($_SESSION['admin_user_name']);
@@ -109,6 +237,7 @@ class Admin extends Controller {
 
     // 생방송 보기
     public function main() {
+        $this->authorizeAdmin(__FUNCTION__);
         // 하늘문 예배
         $sky_worship = $this->admin_model->get_live_worship('sky');
         // 브엘성회 예배
@@ -122,6 +251,7 @@ class Admin extends Controller {
 
     // Ajax: 하늘문 접속자
     public function get_sky_live_user() {
+        $this->authorizeAdmin(__FUNCTION__);
         $users = $this->admin_model->get_live_users('sky');
         header('Content-Type: application/json');
         echo json_encode($users);
@@ -130,6 +260,7 @@ class Admin extends Controller {
 
     // Ajax: 브엘성회 접속자
     public function get_beer_live_user() {
+        $this->authorizeAdmin(__FUNCTION__);
         $users = $this->admin_model->get_live_users('beer');
         header('Content-Type: application/json');
         echo json_encode($users);
@@ -143,51 +274,13 @@ class Admin extends Controller {
     /** 생방송 링크 관리 시작 */
     
     public function live_list() {
-        // 세션이 없으면 로그인 페이지로 이동
-        if (!isset($_SESSION['admin_user_name'])) {
-            header("Location: /admin/login");
-            exit;
-        }
-
-        // 로그인 된 경우 생방송 관리 페이지 출력
-        // 페이지에 필요한 데이터 호출
-        $church_select = $_GET['church'] ?? '';
-        $page_set = 10;
-        $block_set = 5;
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-        $total = $this->admin_model->get_live_total($church_select);
-        $total_page = ceil($total / $page_set);
-        $block = ceil($page / $block_set);
-        $block_start = (($block - 1) * $block_set) + 1;
-        $block_end = $block_start + $block_set - 1;
-        if ($block_end > $total_page) $block_end = $total_page;
-        $start_num = ($page - 1) * $page_set;
-
-        $list = $this->admin_model->get_live_list($church_select, $start_num, $page_set);
-        $pass_row = $this->admin_model->get_last_password();
-
-        $yoil = array('일', '월', '화', '수', '목', '금', '토');
-
-        $this->view('admin/live_list', [
-            'list' => $list,
-            'church_select' => $church_select,
-            'page_set' => $page_set,
-            'block_set' => $block_set,
-            'page' => $page,
-            'block' => $block,
-            'block_start' => $block_start,
-            'block_end' => $block_end,
-            'total' => $total,
-            'total_page' => $total_page,
-            'start_num' => $start_num,
-            'pass_row' => $pass_row,
-            'yoil' => $yoil,
-        ]);
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('live_list');
     }
 
     // use 상태 토글 (Ajax)
     public function update_use() {
+        $this->authorizeAdmin(__FUNCTION__);
         $idx = $_GET['idx'] ?? null;
         if ($idx) {
             $result = $this->admin_model->toggle_use($idx);
@@ -198,6 +291,7 @@ class Admin extends Controller {
 
     // view 상태 토글 (Ajax)
     public function update_view() {
+        $this->authorizeAdmin(__FUNCTION__);
         $idx = $_GET['idx'] ?? null;
         $view = $_GET['view'] ?? null;
         if ($idx && $view !== null) {
@@ -208,6 +302,7 @@ class Admin extends Controller {
     }
 
     public function live_read() {
+        $this->authorizeAdmin(__FUNCTION__);
         // 세션이 없으면 로그인 페이지로 이동
         if (!isset($_SESSION['admin_user_name'])) {
             header("Location: /admin/login");
@@ -227,6 +322,15 @@ class Admin extends Controller {
     }
 
     public function set_live_list() {
+        $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        if (empty($_SESSION['admin_user_name'])) {
+            http_response_code(401);
+            exit;
+        }
+
         $idx = $_GET['idx'] ?? null;
         $type = $idx ? 'mod' : 'save';
 
@@ -250,7 +354,16 @@ class Admin extends Controller {
     }
 
     public function del_live_list() {
-        $live_idx = $_GET['idx'] ?? null;
+        $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        if (empty($_SESSION['admin_user_name'])) {
+            http_response_code(401);
+            exit;
+        }
+
+        $live_idx = input_int('idx', $_POST);
 
         if ($live_idx) {
             // 생방송 접속자 목록에서 제거
@@ -269,41 +382,12 @@ class Admin extends Controller {
     /** 블랙리스트 관리 시작 */
 
     public function black_list() {
-        // 세션이 없으면 로그인 페이지로 이동
-        if (!isset($_SESSION['admin_user_name'])) {
-            header("Location: /admin/login");
-            exit;
-        }
-
-        // 로그인 된 경우 관리자 페이지 출력
-        $page_set = 10;
-        $block_set = 5;
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-        $total = $this->admin_model->get_black_list_total();
-        $total_page = ceil($total / $page_set);
-        $block = ceil($page / $block_set);
-        $block_start = (($block - 1) * $block_set) + 1;
-        $block_end = $block_start + $block_set - 1;
-        if ($block_end > $total_page) $block_end = $total_page;
-        $start_num = ($page - 1) * $page_set;
-
-        $list = $this->admin_model->get_black_list($start_num, $page_set);
-
-        $this->view('admin/black_list', [
-            'list' => $list,
-            'total' => $total,
-            'page_set' => $page_set,
-            'block_set' => $block_set,
-            'page' => $page,
-            'block' => $block,
-            'block_start' => $block_start,
-            'block_end' => $block_end,
-            'total_page' => $total_page,
-        ]);
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('black_list');
     }
 
     public function set_black_list() {
+        $this->authorizeAdmin(__FUNCTION__);
         $nickname = $_POST['nickname'] ?? '';
 
         if ($nickname) {
@@ -323,6 +407,7 @@ class Admin extends Controller {
     }
 
     public function del_black_list() {
+        $this->authorizeAdmin(__FUNCTION__);
         $black_list_idx = $_GET['idx'] ?? null;
 
         if ($black_list_idx) {
@@ -342,38 +427,8 @@ class Admin extends Controller {
     /** 생방송 접속 이력 시작 */
 
     public function history() {
-        // 세션이 없으면 로그인 페이지로 이동
-        if (!isset($_SESSION['admin_user_name'])) {
-            header("Location: /admin/login");
-            exit;
-        }
-
-        // 로그인 된 경우 관리자 페이지 출력
-        $page_set = 10;
-        $block_set = 5;
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-        $total = $this->admin_model->get_history_total();
-        $total_page = ceil($total / $page_set);
-        $block = ceil($page / $block_set);
-        $block_start = (($block - 1) * $block_set) + 1;
-        $block_end = $block_start + $block_set - 1;
-        if ($block_end > $total_page) $block_end = $total_page;
-        $start_num = ($page - 1) * $page_set;
-
-        $list = $this->admin_model->get_history_list($start_num, $page_set);
-
-        $this->view('admin/history', [
-            'list' => $list,
-            'total' => $total,
-            'page_set' => $page_set,
-            'block_set' => $block_set,
-            'page' => $page,
-            'block' => $block,
-            'block_start' => $block_start,
-            'block_end' => $block_end,
-            'total_page' => $total_page,
-        ]);
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('history');
     }
     
     /** 생방송 접속 이력 끝 */
@@ -384,55 +439,12 @@ class Admin extends Controller {
 
     // 다시보기 영상 관리 메인
     public function video_list() {
-        // 세션이 없으면 로그인 페이지로 이동
-        if (!isset($_SESSION['admin_user_name'])) {
-            header("Location: /admin/login");
-            exit;
-        }
-
-        // 설교자 or 교회 선택
-        $church_select = $_GET['church'] ?? '';
-        $preacher_select = $_GET['preacher'] ?? '';
-
-        // 설교자 목록
-        $preacher_list = $this->admin_model->get_preacher_select_list($preacher_select);
-
-        // 게시물/페이징
-        $page_set = 10;
-        $block_set = 5;
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $total = $this->admin_model->get_video_count($church_select, $preacher_select);
-        $total_page = ceil($total / $page_set);
-        $block = ceil($page / $block_set);
-        $block_start = (($block - 1) * $block_set) + 1;
-        $block_end = min($block_start + $block_set - 1, $total_page);
-        $start_num = ($page - 1) * $page_set;
-
-        // 영상 목록
-        $video_list = $this->admin_model->get_video_list($church_select, $preacher_select, $start_num, $page_set);
-
-        // 요일 배열
-        $yoil = ['일', '월', '화', '수', '목', '금', '토'];
-
-        $this->view('admin/video_list', [
-            'preacher_list' => $preacher_list,
-            'preacher_select' => $preacher_select,
-            'church_select' => $church_select,
-            'video_list' => $video_list,
-            'page_set' => $page_set,
-            'block_set' => $block_set,
-            'page' => $page,
-            'block' => $block,
-            'block_start' => $block_start,
-            'block_end' => $block_end,
-            'total' => $total,
-            'total_page' => $total_page,
-            'start_num' => $start_num,
-            'yoil' => $yoil,
-        ]);
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('video_list');
     }
 
     public function video_read() {
+        $this->authorizeAdmin(__FUNCTION__);
         // 세션이 없으면 로그인 페이지로 이동
         if (!isset($_SESSION['admin_user_name'])) {
             header("Location: /admin/login");
@@ -458,6 +470,7 @@ class Admin extends Controller {
     }
 
     public function set_video_list() {
+        $this->authorizeAdmin(__FUNCTION__);
         $idx = $_GET['idx'] ?? null;
         $type = $idx ? 'mod' : 'save';
 
@@ -481,6 +494,7 @@ class Admin extends Controller {
     }
     
     public function del_video_list() {
+        $this->authorizeAdmin(__FUNCTION__);
         $video_idx = $_GET['idx'] ?? null;
 
         if ($video_idx) {
@@ -512,40 +526,12 @@ class Admin extends Controller {
     /** 관리자 관리 시작 */
     
     public function admin_list() {
-        // 세션이 없으면 로그인 페이지로 이동
-        if (!isset($_SESSION['admin_user_name'])) {
-            header("Location: /admin/login");
-            exit;
-        }
-
-        // 로그인 된 경우 관리자 관리 페이지 출력
-        $page_set = 10;
-        $block_set = 5;
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-        $total = $this->admin_model->get_admin_count();
-        $total_page = ceil($total / $page_set);
-        $block = ceil($page / $block_set);
-        $block_start = (($block - 1) * $block_set) + 1;
-        $block_end = min($block_start + $block_set - 1, $total_page);
-        $start_num = ($page - 1) * $page_set;
-
-        $admin_list = $this->admin_model->get_admin_list($start_num, $page_set);
-
-        $this->view('admin/admin_list', [
-            'admin_list' => $admin_list,
-            'page_set' => $page_set,
-            'block_set' => $block_set,
-            'page' => $page,
-            'block' => $block,
-            'block_start' => $block_start,
-            'block_end' => $block_end,
-            'total' => $total,
-            'total_page' => $total_page,
-        ]);
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('admin_list');
     }
 
     public function admin_read() {
+        $this->authorizeAdmin(__FUNCTION__);
         // 세션이 없으면 로그인 페이지로 이동
         if (!isset($_SESSION['admin_user_name'])) {
             header("Location: /admin/login");
@@ -571,6 +557,7 @@ class Admin extends Controller {
     }
 
     public function set_admin() {
+        $this->authorizeAdmin(__FUNCTION__);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $idx = $_GET['idx'] ?? null; // 있을 경우 수정
 
@@ -592,6 +579,7 @@ class Admin extends Controller {
 
     // 관리자 삭제
     public function del_admin() {
+        $this->authorizeAdmin(__FUNCTION__);
         $admin_idx = $_GET['idx'] ?? null;
 
         if ($admin_idx) {
@@ -611,40 +599,12 @@ class Admin extends Controller {
     /** 설교자 관리 시작 */
 
     public function preacher_list() {
-        // 세션이 없으면 로그인 페이지로 이동
-        if (!isset($_SESSION['admin_user_name'])) {
-            header("Location: /admin/login");
-            exit;
-        }
-
-        // 로그인 된 경우 관리자 페이지 출력
-        $page_set = 10;
-        $block_set = 5;
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-        $total = $this->admin_model->get_preacher_count();
-        $total_page = ceil($total / $page_set);
-        $block = ceil($page / $block_set);
-        $block_start = (($block - 1) * $block_set) + 1;
-        $block_end = min($block_start + $block_set - 1, $total_page);
-        $start_num = ($page - 1) * $page_set;
-
-        $preacher_list = $this->admin_model->get_preacher_list($start_num, $page_set);
-
-        $this->view('admin/preacher_list', [
-            'preacher_list' => $preacher_list,
-            'page_set' => $page_set,
-            'block_set' => $block_set,
-            'page' => $page,
-            'block' => $block,
-            'block_start' => $block_start,
-            'block_end' => $block_end,
-            'total' => $total,
-            'total_page' => $total_page,
-        ]);
+        $this->authorizeAdmin(__FUNCTION__);
+        $this->renderAdminList('preacher_list');
     }
 
     public function get_preacher() {
+        $this->authorizeAdmin(__FUNCTION__);
         $idx = $_POST['idx'] ?? null;
         if (!$idx) {
             echo json_encode(['error' => 'No index provided']);
@@ -656,6 +616,7 @@ class Admin extends Controller {
     }
 
     public function set_preacher() {
+        $this->authorizeAdmin(__FUNCTION__);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $idx = $_POST['mod_idx'] ?? null;
             $name = trim($_POST['name'] ?? $_POST['mod_name'] ?? '');
@@ -678,6 +639,7 @@ class Admin extends Controller {
 
     // 설교자 삭제
     public function del_preacher() {
+        $this->authorizeAdmin(__FUNCTION__);
         $preacher_idx = $_GET['idx'] ?? null;
 
         if ($preacher_idx) {

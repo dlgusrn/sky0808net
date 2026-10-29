@@ -1,6 +1,6 @@
 <div class="nav-menu-mobile">
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-        <a href="/admin/main" aria-label="하늘문 관리자 홈"><img class="admin-logo" alt="하늘문교회기도원" src="/img/main_logo.png"></a>
+        <a href="/admin/main" aria-label="하늘문 관리자 홈"><img class="admin-logo" alt="하늘문교회기도원" src="/img/church-logo.png?v=1"></a>
         <button class="navbar-toggler position-absolute d-md-none collapsed mobile-nav" type="button" aria-controls="adminMobileMenu" aria-expanded="false" aria-label="관리 메뉴 열기">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -19,6 +19,9 @@
             <? if ( ! empty ( $_SESSION['admin_info'] ) && $_SESSION['admin_info']['black_list'] == 'Y' ) : ?>
             <a class="nav-side" href="/admin/black_list">　블랙리스트 관리</a>
             <? endif ; ?>
+        <?php if (($_SESSION['admin_info']['notice'] ?? (array_key_exists('notice', $_SESSION['admin_info']) ? 'N' : ($_SESSION['admin_info']['live_list'] ?? 'N'))) === 'Y'): ?>
+        <a class="nav-side" href="/admin/notice">　공지사항 관리</a>
+        <?php endif; ?>
         </div>
         <? endif ; ?>
         <? if ( ! empty ( $_SESSION['admin_info'] ) && $_SESSION['admin_info']['video_list'] == 'Y' ) : ?>
@@ -43,7 +46,7 @@
 </div>
 <div class="nav-menu">
     <div class="text-center">
-        <a href="/admin/" aria-label="하늘문 관리자 홈"><img class="admin-logo" alt="하늘문교회기도원" src="/img/main_logo.png"></a>
+        <a href="/admin/" aria-label="하늘문 관리자 홈"><img class="admin-logo" alt="하늘문교회기도원" src="/img/church-logo.png?v=1"></a>
     </div>
     <? if ( ! empty ( $_SESSION['admin_info'] ) && $_SESSION['admin_info']['live_manage'] == 'Y' ) : ?>
     <a class="live-nav-top" href="#">생방송</a>
@@ -58,6 +61,9 @@
         <? if ( ! empty ( $_SESSION['admin_info'] ) && $_SESSION['admin_info']['black_list'] == 'Y' ) : ?>
         <a class="nav-side" href="/admin/black_list">　블랙리스트 관리</a>
         <? endif ; ?>
+        <?php if (($_SESSION['admin_info']['notice'] ?? (array_key_exists('notice', $_SESSION['admin_info']) ? 'N' : ($_SESSION['admin_info']['live_list'] ?? 'N'))) === 'Y'): ?>
+        <a class="nav-side" href="/admin/notice">　공지사항 관리</a>
+        <?php endif; ?>
     </div>
     <? endif ; ?>
     <? if ( ! empty ( $_SESSION['admin_info'] ) && $_SESSION['admin_info']['video_list'] == 'Y' ) : ?>

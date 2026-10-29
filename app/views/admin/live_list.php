@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../layout/auth.inc';
 $num = $total;
 $subt = 0;
 ?>
@@ -10,6 +11,7 @@ $subt = 0;
         </div>
         <div class="nav-right">
             <h4 class="main-title">생방송 링크 관리</h4>
+            <?php include __DIR__ . '/list_filters.php'; ?>
             <div class="admin-row">
                 <table class="table table-hover text-center">
                     <thead>
@@ -85,6 +87,7 @@ $subt = 0;
             </div>
             <div class="modal-body">
                 <form method="post" action="/admin/set_live_list">
+                    <?=csrf_field()?>
                     <div class="container">
                         <div class="mb-3 row">
                             <label for="title" class="col-sm-2 col-form-label">교회</label>
@@ -140,7 +143,11 @@ $subt = 0;
 
     // 교회 변경
     $('#church_select').change(function(){
-        location.href = '/admin/live_list?church=' + $(this).val();
+        const url = new URL(window.location.href);
+        if ($(this).val()) url.searchParams.set('church', $(this).val());
+        else url.searchParams.delete('church');
+        url.searchParams.delete('page');
+        location.href = url.pathname + '?' + url.searchParams.toString();
     });
 
     // use 토글

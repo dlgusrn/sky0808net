@@ -7,6 +7,7 @@
         </div>
         <div class="nav-right">
             <h4 class="main-title">다시보기 영상 관리</h4>
+            <?php include __DIR__ . '/list_filters.php'; ?>
             <div class="admin-row">
                 <table class="table table-hover text-center">
                     <thead>
@@ -151,6 +152,7 @@
             searchParams.delete(param); // remove if empty
         }
 
+        searchParams.delete('page');
         // 새 URL 적용
         window.location.href = url.pathname + '?' + searchParams.toString();
     }

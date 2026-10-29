@@ -8,11 +8,11 @@ class App {
         $url = $this->parseUrl();
 
         // 컨트롤러 결정
-        if (isset($url[0]) && file_exists('../app/controllers/' . ucfirst($url[0]) . '.php')) {
+        if (isset($url[0]) && file_exists(__DIR__ . '/../app/controllers/' . ucfirst($url[0]) . '.php')) {
             $this->controller = ucfirst($url[0]);
             unset($url[0]);
         }
-        require_once '../app/controllers/' . $this->controller . '.php';
+        require_once __DIR__ . '/../app/controllers/' . $this->controller . '.php';
         $this->controller = new $this->controller;
 
         // 메서드 결정

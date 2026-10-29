@@ -1,4 +1,13 @@
 RewriteEngine On
+
+# Preserve common read-only legacy bookmarks during the MVC transition.
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
+RewriteRule ^live/admin/?$ /admin/login [R=302,L]
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
+RewriteRule ^live/index\.html$ /live/choice [R=302,L]
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
+RewriteRule ^live/view\.html$ /live/worship_view [R=302,L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

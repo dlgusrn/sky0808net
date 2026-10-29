@@ -1,17 +1,26 @@
 <?php
 function render_pagination($page, $total_page, $block_start, $block_end, $total) {
+    // Apache rewrite가 내부 전달한 url은 제외하고 검색 조건은 유지한다.
+    $query = $_GET;
+    unset($query['url'], $query['page']);
+    $last_page = max(1, (int) $total_page);
+    $page_link = function ($target) use ($query, $last_page) {
+        $params = $query;
+        $params['page'] = max(1, min($last_page, (int) $target));
+        return htmlspecialchars('?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986), ENT_QUOTES, 'UTF-8');
+    };
     ob_start();
     ?>
     <div class="d-grid d-flex justify-content-center">
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=1" aria-label="First">
+                    <a class="page-link" href="<?= $page_link(1) ?>" aria-label="First">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
-                <li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                <li class="page-item <?= $block_start <= 1 ? 'disabled' : '' ?>">
+                    <a class="page-link" href="<?= $page_link($block_start - 1) ?>" aria-label="Previous" title="이전 페이지 묶음">
                         <span aria-hidden="true">&lt;</span>
                     </a>
                 </li>
@@ -19,20 +28,20 @@ function render_pagination($page, $total_page, $block_start, $block_end, $total)
                 <?php if ($total > 0): ?>
                     <?php for ($i = $block_start; $i <= $block_end; $i++): ?>
                         <li class="page-item <?= $page == $i ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            <a class="page-link" href="<?= $page_link($i) ?>"><?= $i ?></a>
                         </li>
                     <?php endfor; ?>
                 <?php else: ?>
-                    <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+                    <li class="page-item active"><a class="page-link" href="<?= $page_link(1) ?>">1</a></li>
                 <?php endif; ?>
 
-                <li class="page-item <?= $page >= $total_page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                <li class="page-item <?= $block_end >= $last_page ? 'disabled' : '' ?>">
+                    <a class="page-link" href="<?= $page_link($block_end + 1) ?>" aria-label="Next" title="다음 페이지 묶음">
                         <span aria-hidden="true">&gt;</span>
                     </a>
                 </li>
                 <li class="page-item <?= $page >= $total_page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $total_page ?>" aria-label="Last">
+                    <a class="page-link" href="<?= $page_link($total_page) ?>" aria-label="Last">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
