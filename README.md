@@ -33,4 +33,4 @@ python3 scripts/release/build.py
 
 ## Git 배포
 
-앞으로의 코드 배포는 [Git 배포 절차](docs/GIT_DEPLOYMENT.md)를 기준으로 합니다. `develop`에서 dev 검증 후 동일 커밋을 `master`에 합쳐 운영에서 `git pull --ff-only`로 반영합니다. 기존 압축 배포에서 Git 폴더로 전환하는 최초 작업이 필요하며, 서버 설정·DB 비공개 설정·업로드는 별도로 유지합니다.
+앞으로의 코드 배포는 [Git 배포 절차](docs/GIT_DEPLOYMENT.md)를 기준으로 합니다. `master` 하나를 사용하며, dev에서 확인한 커밋을 운영에 반영합니다. 기존 압축 배포에서 Git 폴더로 전환하는 최초 작업이 필요하며, 서버 설정·DB 비공개 설정·업로드는 별도로 유지합니다.

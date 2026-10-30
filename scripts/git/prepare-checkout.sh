@@ -2,13 +2,13 @@
 # Prepare only. Apache configuration and the running service are untouched.
 set -euo pipefail
 if [[ $# != 3 ]]; then
-  echo "Usage: bash $0 <active-mvc-root> <new-checkout> <develop|master>" >&2
+  echo "Usage: bash $0 <active-mvc-root> <new-checkout> <master>" >&2
   exit 1
 fi
 active_root="$(realpath "$1")"
 checkout="$2"
 branch="$3"
-[[ "$branch" == develop || "$branch" == master ]] || { echo 'Unsupported branch' >&2; exit 1; }
+[[ "$branch" == master ]] || { echo 'Unsupported branch' >&2; exit 1; }
 [[ -f "$active_root/public/index.php" && -f "$active_root/config/database.local.php" && -d "$active_root/storage/notice" ]] || { echo 'Active MVC configuration/uploads missing' >&2; exit 1; }
 [[ ! -e "$checkout" ]] || { echo 'Checkout already exists; inspect it instead of overwriting' >&2; exit 1; }
 upload_path="$(realpath "$active_root/storage/notice")"
