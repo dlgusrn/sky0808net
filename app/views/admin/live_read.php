@@ -15,7 +15,7 @@ include_once __DIR__ . '/../layout/header.php';
         </div>
         <div class="nav-right">
             <h4 class="main-title">생방송 링크 관리</h4>
-            <div class="container-md admin-row">
+            <div class="container-md admin-row admin-link-detail">
                 <div class="mb-3 row">
                     <label for="title" class="col-sm-2 col-form-label">교회</label>
                     <div class="col-sm-10">
