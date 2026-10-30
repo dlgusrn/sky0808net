@@ -55,7 +55,7 @@ include_once __DIR__ . '/../layout/header.php';
                     </div>
                 </div>
                 <div class="mb-3 row justify-content-center">
-                    <div class="live col-6">
+                    <div class="live col-6 admin-link-preview">
                         <iframe src="https://www.youtube.com/embed/<?=htmlspecialchars((string) $row['link'], ENT_QUOTES, 'UTF-8')?>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                 </div>

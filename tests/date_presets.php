@@ -20,4 +20,14 @@ $f=Admin_filters::parse(['range'=>'quarter','church'=>'sky','preacher'=>'시험'
 date_check($f['q']==='검색'&&$f['church']==='sky'&&$f['per_page']===50&&$f['preacher']==='시험','Other filters preserved');
 $failed=false;try{Admin_filters::parse(['range'=>'invalid'],$today);}catch(InvalidArgumentException $e){$failed=true;}
 date_check($failed,'Invalid preset rejected');
+$f=Admin_filters::parse(['range'=>'today'],$today);
+date_check($f['start_date']==='2026-10-29'&&$f['end_date']==='2026-10-29','Today covers one day');
+$f=Admin_filters::for_kind('history',[]);
+date_check($f['range']==='today'&&$f['start_date']===$f['end_date'],'History defaults to today');
+$f=Admin_filters::for_kind('history',['range'=>'week']);
+date_check($f['range']==='week','History explicit preset preserved');
+$f=Admin_filters::for_kind('history',['start_date'=>'2026-01-01','end_date'=>'2026-01-31']);
+date_check($f['range']==='custom'&&$f['start_date']==='2026-01-01','History custom dates preserved');
+$f=Admin_filters::for_kind('live_list',[]);
+date_check($f['range']==='week','Other date lists retain week default');
 echo 'PASS: ',$count,' date preset/default/custom/month-end checks.',PHP_EOL;

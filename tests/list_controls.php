@@ -22,7 +22,7 @@ foreach(['black_list','admin_list','preacher_list']as $kind){
  foreach($links[1]as $link){parse_str(parse_url(html_entity_decode($link,ENT_QUOTES,'UTF-8'),PHP_URL_QUERY),$query);control_check(isset($query['per_page'],$query['page'])&&count($query)===3&&$query['q']==='old','Pagination drops dates but keeps keyword');}
 }
 foreach(['live_list','video_list','history','notice']as $kind){
- $f=Admin_filters::for_kind($kind,[]);control_check($f['range']==='week'&&$f['start_date']!=='','Searchable menus retain default dates');
+ $f=Admin_filters::for_kind($kind,[]);control_check($f['range']===($kind==='history'?'today':'week')&&$f['start_date']!=='','Searchable menus retain default dates');
  $html=controls($kind);control_check(strpos($html,'name="q"')!==false&&strpos($html,'name="start_date"')!==false,'Search controls remain');
 }
 echo 'PASS: ',$count,' keyword-only controls and stale date query checks.',PHP_EOL;

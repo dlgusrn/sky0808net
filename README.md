@@ -30,3 +30,7 @@ python3 scripts/release/build.py
 ```
 
 실제 dev 기본 주소 전환·검증·롤백은 [DEV_RELEASE.md](docs/DEV_RELEASE.md)를 따릅니다. 개발 중 localhost:18080에서 수행한 검증과 기본 80/443 전환 검증은 구분합니다. 운영 배포는 dev 기본 주소 검증 후 진행합니다.
+
+## Git 배포
+
+앞으로의 코드 배포는 [Git 배포 절차](docs/GIT_DEPLOYMENT.md)를 기준으로 합니다. `develop`에서 dev 검증 후 동일 커밋을 `master`에 합쳐 운영에서 `git pull --ff-only`로 반영합니다. 기존 압축 배포에서 Git 폴더로 전환하는 최초 작업이 필요하며, 서버 설정·DB 비공개 설정·업로드는 별도로 유지합니다.

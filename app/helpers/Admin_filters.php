@@ -5,7 +5,7 @@ class Admin_filters {
             'live_list' => ['table'=>'live_list','date'=>'title','label'=>'예배일','fields'=>['title','worship','link'],'order'=>'idx DESC'],
             'video_list' => ['table'=>'video_list','date'=>'title','label'=>'예배일','fields'=>['title','worship','preacher','link'],'order'=>'idx DESC'],
             'history' => ['table'=>'live_history','date'=>'login_date','label'=>'입장일','fields'=>['name','branch'],'order'=>'idx DESC'],
-            'black_list' => ['table'=>'black_list','date'=>'insert_date','label'=>'등록일','fields'=>['nickname'],'order'=>'idx ASC'],
+            'black_list' => ['table'=>'black_list','date'=>'insert_date','label'=>'등록일','fields'=>['nickname'],'order'=>'idx DESC'],
             'admin_list' => ['table'=>'member_admin','date'=>'insert_date','label'=>'등록일','fields'=>['username','church'],'order'=>'level, idx','select'=>'idx, username, church, level, insert_date, update_date'],
             'preacher_list' => ['table'=>'preacher_list','date'=>'insert_date','label'=>'등록일','fields'=>['name'],'order'=>'idx ASC'],
             'notice' => ['table'=>'notice','date'=>'start_date','label'=>'공지 기간','fields'=>['title','contents'],'order'=>'idx DESC','select'=>'idx, enable, DATE(start_date) AS start_date, DATE(end_date) AS end_date, title, insert_date, update_date'],
@@ -18,6 +18,10 @@ class Admin_filters {
         if (!self::uses_dates($kind)) {
             $query = array_intersect_key($query, array_flip(['page','per_page','q']));
             $query['range'] = 'custom';
+        }
+        if ($kind === 'history' && self::scalar($query, 'range') === ''
+            && !array_key_exists('start_date', $query) && !array_key_exists('end_date', $query)) {
+            $query['range'] = 'today';
         }
         return self::parse($query);
     }
@@ -33,12 +37,14 @@ class Admin_filters {
         foreach (['q','start_date','end_date','church','preacher'] as $key) $result[$key]=self::scalar($query,$key);
         $range = self::scalar($query, 'range');
         if ($range === '') $range = array_key_exists('start_date', $query) || array_key_exists('end_date', $query) ? 'custom' : 'week';
-        if (!in_array($range, ['week','month','quarter','year','custom'], true)) throw new InvalidArgumentException('조회 기간을 확인해 주세요.');
+        if (!in_array($range, ['today','week','month','quarter','year','custom'], true)) throw new InvalidArgumentException('조회 기간을 확인해 주세요.');
         $result['range'] = $range;
         if ($range !== 'custom') {
             $today = ($today ?? new DateTimeImmutable('today', new DateTimeZone('Asia/Seoul')))->setTime(0, 0);
             $result['end_date'] = $today->format('Y-m-d');
-            if ($range === 'week') {
+            if ($range === 'today') {
+                $result['start_date'] = $result['end_date'];
+            } elseif ($range === 'week') {
                 $result['start_date'] = $today->modify('-6 days')->format('Y-m-d');
             } else {
                 $months = ['month'=>1,'quarter'=>3,'year'=>12][$range];
