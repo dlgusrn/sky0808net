@@ -88,6 +88,7 @@ $date = explode('-', $video['title']);
             </div>
             <div class="modal-body">
                 <form method="post" action="/admin/set_video_list?idx=<?= htmlspecialchars($video['idx']) ?>">
+                    <?=csrf_field()?>
                     <div class="container">
                         <div class="mb-3 row">
                             <label class="col-sm-2 col-form-label">설교자</label>
@@ -147,7 +148,7 @@ $date = explode('-', $video['title']);
     // 삭제 확인
     $('.delete').click(function(){
         if(confirm('삭제한 데이터는 복구할 수 없습니다.\n정말로 삭제하시겠습니까?')) {
-            window.location.replace('/admin/del_video_list?idx=' + $(this).attr('data-idx'));
+            adminPost('/admin/del_video_list', {idx: $(this).attr('data-idx')});
         }
     });
 </script>

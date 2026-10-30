@@ -8,9 +8,10 @@ fi
 while IFS= read -r -d '' release_file; do
   php -d short_open_tag=1 -l "$release_file" >/dev/null
 done < <(find "$release_root/app" "$release_root/core" "$release_root/config" "$release_root/public" "$release_root/tests" -type f -name '*.php' -print0)
-for release_test in database_settings admin_permissions admin_filters list_controls date_presets pagination notices broadcast_status broadcast_registration youtube_links admin_forms; do
+for release_test in database_settings login_password admin_permissions admin_filters list_controls date_presets pagination notices broadcast_status broadcast_registration youtube_links admin_forms admin_csrf_forms list_layout; do
   php -d short_open_tag=1 "$release_root/tests/$release_test.php"
 done
+bash "$release_root/tests/admin_requests.sh"
 if [[ "${1:-}" == "--database" ]]; then
   php "$release_root/tests/admin_listing_db.php"
   php "$release_root/tests/broadcast_status_db.php"

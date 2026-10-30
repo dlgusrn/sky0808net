@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/auth.inc'; ?>
 <?
     $url = explode ( '/', $_SERVER['REQUEST_URI'] );
     switch ( $url[1] ) :
@@ -19,6 +20,7 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8" />
+        <?php if ($url[1] === 'admin'): ?><meta name="csrf-token" content="<?=e(csrf_token())?>"><?php endif; ?>
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <meta property="og:image" content="/dev/img/link.jpg">
         <title><?=$title?> | 하늘문생방송예배</title>
@@ -32,8 +34,8 @@
         <link href="/css/main.css?<?=date('Y-m-d h:i:s')?>" rel="stylesheet">
         <link href="/css/dashboard.css?<?=date('Y-m-d h:i:s')?>" rel="stylesheet">
         <?php if ($url[1] === 'admin'): ?>
-        <link href="/css/admin.css?v=20261030-link-preview2" rel="stylesheet">
-        <script src="/js/admin-ui.js?v=20261029-search" defer></script>
+        <link href="/css/admin.css?v=20261030-compact-lists" rel="stylesheet">
+        <script src="/js/admin-ui.js?v=20261030-post-csrf" defer></script>
         <?php endif; ?>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

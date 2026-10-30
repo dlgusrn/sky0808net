@@ -35,11 +35,6 @@ $subt = 0;
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
-            <?php
-            include_once __DIR__ . '/../../helpers/pagination_helper.php';
-            echo render_pagination($page, $total_page, $block_start, $block_end, $total);
-            ?>
         </div>
     </div>
 </main>

@@ -108,21 +108,48 @@ body.admin-ui { --admin-accent: #355cde; --admin-line: #e4e9f1; background: #f5f
 .admin-ui .live-main .main-row .nav-left .nav-menu>.text-center>a{display:block;background:#fff;border-radius:10px;padding:4px 10px}
 .admin-ui .live-main .main-row .nav-left .nav-menu>.text-center .admin-logo{display:block;width:100%;max-width:210px;height:auto;margin:0 auto}
 .admin-ui .live-main .admin-login-form .login-top img{display:block;width:100%;max-width:220px;height:auto;margin:0 auto 16px}
-.admin-ui .nav-right>form.admin-list-filters{display:grid;grid-template-columns:145px 160px 160px minmax(150px,1fr) auto;gap:14px;align-items:end;padding:20px;margin:0 0 20px;box-shadow:none}
-.admin-ui .admin-list-filters label{display:block;margin-bottom:6px;color:#63718a;font-size:12px}
-.admin-ui .admin-search-actions{display:flex;gap:8px;white-space:nowrap}
-.admin-ui .admin-list-count{grid-column:1/-1;color:#63718a;font-size:12px}
-@media(max-width:1250px){.admin-ui .nav-right>form.admin-list-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-ui .admin-search-term{grid-column:1/3}}
-@media(max-width:767px){
- .admin-ui .nav-right>form.admin-list-filters{grid-template-columns:repeat(2,minmax(0,1fr));padding:16px;gap:12px}
- .admin-ui .admin-search-term{grid-column:1/-1}.admin-ui .admin-search-actions{grid-column:1/-1}
- .admin-ui .navbar>a{background:#fff;border-radius:6px;padding:0 8px}
- .admin-ui .live-main .main-row .nav-left .navbar .admin-logo{width:140px;height:auto;margin:0}
+/* Compact search surface and the single toolbar above each management table. */
+.admin-ui .nav-right>form.admin-list-filters {
+ display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;padding:12px 14px;margin:0 0 12px;
+ background:#fff;border:1px solid var(--admin-line);border-radius:8px;box-shadow:none;
 }
-
-.admin-ui .admin-date-presets{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.admin-ui .admin-date-presets>span{font-size:12px;color:#63718a;margin-right:4px}
-.admin-ui .admin-date-presets .btn{padding:6px 12px;min-height:34px}
+.admin-ui .admin-list-filters>div {min-width:0}
+.admin-ui .admin-list-filters label {display:block;margin:0 0 4px;color:#718099;font-size:11px;line-height:1.4}
+.admin-ui .admin-list-filters :is(.form-control,.form-select) {min-height:32px;height:32px;padding:5px 10px;font-size:12px;border-radius:6px}
+.admin-ui .admin-list-filters .form-select {padding-right:28px}
+.admin-ui .admin-period-field {flex:0 0 90px}
+.admin-ui .admin-date-field {flex:0 0 145px}
+.admin-ui .admin-date-separator {align-self:flex-end;line-height:32px;color:#8b98ad}
+.admin-ui .admin-church-field {flex:0 0 115px}
+.admin-ui .admin-preacher-field {flex:0 0 135px}
+.admin-ui .admin-search-term {flex:1 1 180px;max-width:320px}
+.admin-ui .admin-search-actions {display:flex;gap:6px;white-space:nowrap}
+.admin-ui .admin-list-filters .btn {height:32px;padding:5px 12px;font-size:12px;border-radius:6px}
+.admin-ui .admin-list-toolbar {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;min-width:0}
+.admin-ui .admin-list-toolbar-left,.admin-ui .admin-list-toolbar-right {display:flex;align-items:center;gap:8px;min-width:0}
+.admin-ui .admin-list-toolbar-right {margin-left:auto}
+.admin-ui .admin-list-count {font-size:12px;color:#718099;white-space:nowrap}
+.admin-ui .admin-list-count strong {color:#25324a;font-weight:600}
+.admin-ui .admin-list-toolbar .btn {height:30px;padding:4px 12px;font-size:12px;border-radius:6px;white-space:nowrap}
+.admin-ui .admin-list-toolbar #list-per-page {width:80px;min-height:30px;height:30px;padding:4px 26px 4px 9px;font-size:12px;border-radius:6px}
+.admin-ui .admin-pagination {display:flex;min-width:0}
+.admin-ui .admin-pagination .pagination {gap:4px;margin:0;flex-wrap:nowrap}
+.admin-ui .admin-pagination .page-link {display:flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:4px 7px;border:1px solid var(--admin-line);border-radius:6px;font-size:12px}
+.admin-ui .admin-pagination .page-item.disabled .page-link {color:#b4bfd0;background:#f8faff}
+@media(max-width:767px){
+ .admin-ui .nav-right>form.admin-list-filters {padding:12px;gap:8px}
+ .admin-ui .admin-period-field {flex-basis:100%}
+ .admin-ui .admin-period-field select {max-width:150px}
+ .admin-ui .admin-date-field {flex:1 1 115px}
+ .admin-ui .admin-church-field,.admin-ui .admin-preacher-field {flex:1 1 115px}
+ .admin-ui .admin-search-term {flex:1 1 100%;max-width:none}
+ .admin-ui .admin-list-toolbar {flex-wrap:wrap;gap:10px}
+ .admin-ui .admin-list-toolbar-right {width:100%;justify-content:flex-end}
+ .admin-ui .admin-pagination .pagination {gap:3px}
+ .admin-ui .admin-pagination .page-link {min-width:26px;height:28px;padding:3px 5px;font-size:11px}
+ .admin-ui .navbar>a {background:#fff;border-radius:6px;padding:0 8px}
+ .admin-ui .live-main .main-row .nav-left .navbar .admin-logo {width:140px;height:auto;margin:0}
+}
 
 /* Match the entire viewer panel to the video on desktop; list scroll stays inside. */
 @media (min-width: 768px) {
@@ -144,4 +171,36 @@ body.admin-ui { --admin-accent: #355cde; --admin-line: #e4e9f1; background: #f5f
 /* Compact preview only on the broadcast link detail page. */
 .admin-ui .live-main .main-row .nav-right .admin-row .live.admin-link-preview {
  flex:0 1 900px;width:100%;max-width:900px;min-width:0;padding:0;margin:0 auto;
+}
+
+.admin-ui .admin-logout-form { margin: 0; }
+.admin-ui .admin-logout-form .nav-logout { width:100%;text-align:left;background:transparent;border:0;cursor:pointer; }
+
+/* Slightly denser overall admin scale; player dimensions and login remain independent. */
+body.admin-ui {font-size:13px}
+.admin-ui .live-main .main-row .nav-right {padding:32px clamp(18px,2.5vw,40px) 48px}
+.admin-ui .live-main .nav-right .main-title {font-size:24px;margin-bottom:20px}
+.admin-ui .live-main .main-row .nav-right .table > :not(caption) > * > * {padding:12px 10px}
+.admin-ui .table {font-size:12px}
+.admin-ui .table thead th {font-size:11px}
+.admin-ui .btn {padding:7px 15px;font-size:12px}
+.admin-ui .btn-sm {padding:3px 9px;font-size:11px}
+.admin-ui .modal-header {padding:18px 22px}
+.admin-ui .modal-body {padding:22px}
+@media(max-width:767px){
+ .admin-ui .live-main .main-row .nav-right {padding:22px 12px 32px}
+ .admin-ui .live-main .nav-right .main-title {font-size:21px;margin-bottom:16px}
+ .admin-ui .modal-body {padding:18px 16px}
+}
+
+/* Native logout forms inherit the sidebar's original link layout. */
+.admin-ui .live-main .main-row .nav-left .nav-menu .admin-logout-form {margin-top:auto;padding:0;border:0;width:100%;background:transparent}
+.admin-ui .live-main .main-row .nav-left .admin-logout-form .nav-logout {box-sizing:border-box;display:block;width:100%;height:auto;margin:0;padding:14px;text-align:left;color:#bac7df;font-size:13px;line-height:1.6;border:0;background:transparent}
+.admin-ui .live-main .main-row .nav-left .nav-menu .admin-logout-form .nav-logout {padding-top:18px;border-top:1px solid #30405b;border-radius:0}
+.admin-ui .live-main .main-row .nav-right .table thead th {border-bottom:1px solid var(--admin-line)}
+@media(max-width:380px){
+ .admin-ui .admin-pagination .pagination {gap:2px}
+ .admin-ui .admin-pagination .page-link {min-width:22px;height:28px;padding:3px 4px;font-size:10px}
+ .admin-ui .admin-list-toolbar-right {gap:6px}
+ .admin-ui .admin-list-toolbar #list-per-page {width:68px;font-size:11px;padding-left:7px;padding-right:23px}
 }

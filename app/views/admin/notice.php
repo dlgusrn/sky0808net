@@ -15,15 +15,7 @@
                     <td><a href="#" class="notice-edit link-dark" data-id="<?= (int) $row['idx'] ?>"><?= e($row['title']) ?></a></td>
                     <td><?= e($row['update_date'] ?: '-') ?></td><td><?= e($row['insert_date']) ?></td></tr>
             <?php endforeach; ?>
-            </tbody></table></div>
-        <div class="d-flex justify-content-end mb-3"><button type="button" class="btn btn-primary" id="notice-add">등록</button></div>
-        <?= render_pagination($page, $total_page, $block_start, $block_end, $total) ?>
-    </div>
-</div></main>
-<div class="modal fade" id="notice-modal" tabindex="-1" aria-labelledby="notice-modal-title" aria-hidden="true"><div class="modal-dialog modal-lg"><div class="modal-content">
-    <div class="modal-header"><h5 id="notice-modal-title" class="modal-title">공지사항 등록</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button></div>
-    <div class="modal-body"><form method="post" action="/admin/set_notice" enctype="multipart/form-data" id="notice-form">
-        <?= csrf_field() ?><input type="hidden" name="idx" id="notice-idx" value="">
+            </tbody></table></div><input type="hidden" name="idx" id="notice-idx" value="">
         <div class="row mb-3"><div class="col"><label for="notice-start">시작일</label><input type="date" class="form-control" name="start_date" id="notice-start" required></div>
         <div class="col"><label for="notice-end">종료일</label><input type="date" class="form-control" name="end_date" id="notice-end" required></div></div>
         <div class="mb-3"><label for="notice-title">제목</label><input class="form-control" name="title" id="notice-title" maxlength="100" required></div>

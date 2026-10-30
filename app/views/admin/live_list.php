@@ -19,13 +19,7 @@ $subt = 0;
                             <th width="8%">번호</th>
                             <th width="8%">사용</th>
                             <th width="8%">송출</th>
-                            <th width="9%">
-                                <select class="form-select form-select-sm" id="church_select">
-                                    <option value="">교회</option>
-                                    <option value="sky" <?=$church_select == 'sky' ? 'selected' : ''?>>하늘문</option>
-                                    <option value="beer" <?=$church_select == 'beer' ? 'selected' : ''?>>브엘성회</option>
-                                </select>
-                            </th>
+                            <th width="10%">교회</th>
                             <th>제목</th>
                             <th width="16%">수정일자</th>
                             <th width="16%">생성일자</th>
@@ -44,8 +38,8 @@ $subt = 0;
                         ?>
                         <tr>
                             <td><?=$num - ($page_set * ($page - 1)) - $subt?></td>
-                            <td><a type="button" class="use btn btn-sm btn-<?=$row['use'] == 'Y' ? 'success' : 'danger'?>" id="<?=$row['idx']?>"><?=$row['use']?></a></td>
-                            <td><a type="button" class="view btn btn-sm btn-<?=$row['view'] == 'Y' ? 'success' : 'danger'?>" id="<?=$row['idx']?>"><?=$row['view']?></a></td>
+                            <td><button type="button" class="use btn btn-sm btn-<?=$row['use'] == 'Y' ? 'success' : 'danger'?>" data-id="<?=(int) $row['idx']?>"><?=$row['use']?></button></td>
+                            <td><button type="button" class="view btn btn-sm btn-<?=$row['view'] == 'Y' ? 'success' : 'danger'?>" data-id="<?=(int) $row['idx']?>" <?=$row['use'] !== 'Y' ? 'disabled' : ''?>><?=$row['view']?></button></td>
                             <td><?=$church?></td>
                             <td>
                                 <a class="link-dark" href="/admin/live_read?idx=<?=$row['idx']?>">
@@ -61,18 +55,6 @@ $subt = 0;
                     </tbody>
                 </table>
             </div>
-            <div class="d-grid d-flex justify-content-end mb-3">
-                <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#liveaddModal">등록</a>
-            </div>
-            <!-- <div class="d-flex justify-content-center mb-5">
-                <div class="me-3"><input type="search" class="form-control" name="link" id="link" placeholder="검색"></div>
-                <div><button type="button" class="btn btn-success" id="search_btn">검색</button></div>
-            </div> -->
-
-            <?php
-            include_once __DIR__ . '/../../helpers/pagination_helper.php';
-            echo render_pagination($page, $total_page, $block_start, $block_end, $total);
-            ?>
         </div>
     </div>
 </main>
@@ -141,56 +123,21 @@ $subt = 0;
     // 오늘 날짜 자동 입력
     $('#title').val(new Date().toISOString().substring(0, 10));
 
-    // 교회 변경
-    $('#church_select').change(function(){
-        const url = new URL(window.location.href);
-        if ($(this).val()) url.searchParams.set('church', $(this).val());
-        else url.searchParams.delete('church');
-        url.searchParams.delete('page');
-        location.href = url.pathname + '?' + url.searchParams.toString();
-    });
-
-    // use 토글
-    $('.use').click(function(){
-        var use = $(this).text();
-        var useIdx = $(this).attr('id');
-        var self = $(this);
-
-        $.ajax({
-            type: 'GET',
-            url: '/admin/update_use',
-            data: {idx: useIdx},
-            dataType: 'json',
-            success: function(data) {
-                // 버튼 상태 즉시 변경 (새로고침 없이)
-                if (use == 'Y') {
-                    self.removeClass('btn-success').addClass('btn-danger').text('N');
-                } else {
-                    self.removeClass('btn-danger').addClass('btn-success').text('Y');
-                }
-            }
-        });
-    });
-
-    // view 토글
-    $('.view').click(function(){
-        var view = $(this).text();
-        var viewIdx = $(this).attr('id');
-        var self = $(this);
-
-        $.ajax({
-            type: 'GET',
-            url: '/admin/update_view',
-            data: {idx: viewIdx, view: view},
-            dataType: 'json',
-            success: function(data) {
-                // 버튼 상태 즉시 변경 (새로고침 없이)
-                if (view == 'Y') {
-                    self.removeClass('btn-success').addClass('btn-danger').text('N');
-                } else {
-                    self.removeClass('btn-danger').addClass('btn-success').text('Y');
-                }
-            }
+    // Reload all flags after a write; switching use can change other rows too.
+    $('.use, .view').on('click', function () {
+        var button = $(this);
+        if (button.prop('disabled')) return;
+        var kind = button.hasClass('use') ? 'use' : 'view';
+        var data = {idx: button.data('id'), csrf: $('meta[name="csrf-token"]').attr('content')};
+        data[kind] = button.text().trim();
+        $('.use, .view').prop('disabled', true);
+        $.ajax({type:'POST', url:'/admin/update_' + kind, data:data, dataType:'json'})
+        .done(function (result) {
+            if (!result.result) alert('변경하지 못했습니다. 현재 상태를 다시 확인해 주세요.');
+            window.location.reload();
+        }).fail(function (xhr) {
+            alert(xhr.status === 409 ? '방송 상태가 바뀌었거나 사용 중인 방송이 아닙니다. 다시 확인해 주세요.' : '변경하지 못했습니다. 다시 로그인하거나 상태를 확인해 주세요.');
+            window.location.reload();
         });
     });
 </script>

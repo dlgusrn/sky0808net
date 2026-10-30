@@ -1,4 +1,17 @@
-/* Presentation enhancements only; no data requests or form handlers. */
+/* Shared admin POST navigation and presentation enhancements. */
+window.adminPost = function (url, data) {
+    var token = document.querySelector('meta[name="csrf-token"]');
+    if (!token || !token.content) { alert('페이지를 새로고침한 뒤 다시 시도해 주세요.'); return; }
+    var form = document.createElement('form');
+    form.method = 'post'; form.action = url; form.hidden = true;
+    var fields = Object.assign({}, data || {}, {csrf: token.content});
+    Object.keys(fields).forEach(function (name) {
+        var input = document.createElement('input');
+        input.type = 'hidden'; input.name = name; input.value = fields[name];
+        form.appendChild(input);
+    });
+    document.body.appendChild(form); form.submit();
+};
 document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.classList.add('admin-page');
     document.querySelectorAll('.nav-right > .table, .admin-row > .table').forEach(function (table) {

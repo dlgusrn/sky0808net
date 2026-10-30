@@ -13,7 +13,7 @@ foreach(['black_list','admin_list','preacher_list']as $kind){
  control_check($f['per_page']===50&&$f['page']===2,'Count and page preserved');
  list($where,$params)=Admin_filters::where($kind,$f);control_check(strpos($where,'LIKE')!==false&&isset($params['keyword0'])&&!isset($params['date_start'])&&!isset($params['date_end']),'Keyword query without dates');
  $html=controls($kind);
- control_check(strpos($html,'name="per_page"')!==false&&strpos($html,'50개씩 보기')!==false,'Count selector retained');
+ control_check(strpos($html,'name="per_page"')!==false&&strpos($html,'50개')!==false,'Count selector retained');
  control_check(strpos($html,'name="q"')!==false,'Keyword control retained');
  foreach(['range','start_date','end_date']as $name)control_check(strpos($html,'name="'.$name.'"')===false,'No search controls rendered');
  $_GET=['url'=>'admin/'.$kind,'q'=>'old','range'=>'week','start_date'=>'1900-01-01','per_page'=>50];
@@ -24,6 +24,6 @@ foreach(['black_list','admin_list','preacher_list']as $kind){
 foreach(['live_list','video_list','history','notice']as $kind){
  $f=Admin_filters::for_kind($kind,[]);control_check($f['range']===($kind==='history'?'today':'week')&&$f['start_date']!=='','Searchable menus retain default dates');
  $html=controls($kind);control_check(strpos($html,'name="q"')!==false&&strpos($html,'name="start_date"')!==false,'Search controls remain');
- control_check(strpos($html,'data-date-range="today"')!==false&&strpos($html,'>오늘</button>')!==false,'Today available on all date lists');
+ control_check(strpos($html,'<select name="range"')!==false&&preg_match('/<option value="today"[^>]*>오늘<\/option>/',$html)===1,'Today available on all date lists');
 }
 echo 'PASS: ',$count,' keyword-only controls and stale date query checks.',PHP_EOL;

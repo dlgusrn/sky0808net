@@ -93,113 +93,113 @@ class Admin_model extends Model {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // use 상태 변경
-    public function toggle_use($idx) {
-        // 현재 상태 확인
-        $stmt = $this->db->prepare("SELECT `use` FROM live_list WHERE idx = :idx");
-        $stmt->execute(['idx' => $idx]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$row) return false;
-        $new_use = $row['use'] == 'Y' ? 'N' : 'Y';
-        $update = $this->db->prepare("UPDATE live_list SET `use` = :use WHERE idx = :idx");
-        return $update->execute(['use' => $new_use, 'idx' => $idx]);
-    }
-
-    // view 상태 변경
-    public function toggle_view($idx, $current_view) {
-        $new_view = $current_view == 'Y' ? 'N' : 'Y';
-        $update = $this->db->prepare("UPDATE live_list SET `view` = :view WHERE idx = :idx");
-        return $update->execute(['view' => $new_view, 'idx' => $idx]);
-    }
-
-    // 생방송 링크 정보 가져오기
-    public function get_live_link_by_idx($idx) {
-        $stmt = $this->db->prepare("SELECT * FROM live_list WHERE idx = :idx");
-        $stmt->execute(['idx' => $idx]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    // 생방송 링크 등록 or 수정
-    public function set_live_list($type, $idx = null) {
-        $church   = $_POST['church'] ?? '';
-        $worship  = $_POST['worship'] ?? '';
-        $title    = $_POST['title'] ?? '';
-        $link     = $_POST['link'] ?? '';
-        $passwd   = $_POST['password'] ?? '';
-
-        $link = Youtube_link::video_id($link);
-        if ($link === null || !in_array($church, ['sky', 'beer'], true)) return false;
-        $registrationLock = null;
-
+    // All live-list writes share one lock, so church moves cannot race registrations.
+    private function liveMutation(callable $operation) {
+        $locked = false;
         try {
-            if ($type === 'save') {
-                // Serialize registrations for the same church, including the first row.
-                $lockName = 'sky0808net:live-register:' . $church;
-                $lock = $this->db->prepare('SELECT GET_LOCK(:name, 5)');
-                $lock->execute(['name' => $lockName]);
-                if ((int) $lock->fetchColumn() !== 1) throw new RuntimeException('방송 등록 잠금을 얻지 못했습니다.');
-                $registrationLock = $lockName;
-                $this->db->beginTransaction();
-                $disable = $this->db->prepare("UPDATE live_list SET `use` = 'N' WHERE church = :church");
-                $disable->execute(['church' => $church]);
-                $sql = "INSERT INTO live_list (church, worship, title, link, passwd, `use`, `view`, date_insert)
-                        VALUES (:church, :worship, :title, :link, :passwd, 'Y', 'N', NOW())";
-                $stmt = $this->db->prepare($sql);
-                $success = $stmt->execute([
-                    'church'  => $church,
-                    'worship' => $worship,
-                    'title'   => $title,
-                    'link'    => $link,
-                    'passwd'  => $passwd
-                ]);
-            } elseif ($type === 'mod' && $idx) {
-                $sql = "UPDATE live_list
-                        SET church = :church, worship = :worship, title = :title, link = :link, passwd = :passwd, date_update = NOW()
-                        WHERE idx = :idx";
-                $stmt = $this->db->prepare($sql);
-                $success = $stmt->execute([
-                    'church'  => $church,
-                    'worship' => $worship,
-                    'title'   => $title,
-                    'link'    => $link,
-                    'passwd'  => $passwd,
-                    'idx'     => $idx
-                ]);
-            } else {
-                $success = false;
-            }
-
-            if ($success) {
-                if ($registrationLock !== null) $this->db->commit();
-                return true;
-            } else {
-                if ($registrationLock !== null && $this->db->inTransaction()) $this->db->rollBack();
-                // 실패 로그 기록
-                $this->system_log('ERROR', '[링크 '.($type === 'save' ? '등록' : '수정')." 실패] church: $church, title: $title, idx: $idx");
+            $stmt = $this->db->prepare('SELECT GET_LOCK(:name, 5)');
+            $stmt->execute(['name' => 'sky0808net:live-write']);
+            if ((int) $stmt->fetchColumn() !== 1) return false;
+            $locked = true;
+            $this->db->beginTransaction();
+            $success = $operation();
+            if (!$success) {
+                $this->db->rollBack();
                 return false;
             }
-        } catch (Throwable $e) {
-            if ($registrationLock !== null && $this->db->inTransaction()) $this->db->rollBack();
-            // 예외 발생 시 로그 기록
-            $this->system_log('ERROR', '[링크 '.($type === 'save' ? '등록' : '수정')." 예외] " . $e->getMessage());
+            $this->db->commit();
+            return true;
+        } catch (Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            error_log('Broadcast change failed: ' . $error->getMessage());
             return false;
         } finally {
-            if ($registrationLock !== null) {
+            if ($locked) {
                 try {
-                    $release = $this->db->prepare('SELECT RELEASE_LOCK(:name)');
-                    $release->execute(['name' => $registrationLock]);
+                    $stmt = $this->db->prepare('SELECT RELEASE_LOCK(:name)');
+                    $stmt->execute(['name' => 'sky0808net:live-write']);
                 } catch (Throwable $error) {
-                    error_log('Broadcast registration lock release failed: ' . $error->getMessage());
+                    error_log('Broadcast lock release failed: ' . $error->getMessage());
                 }
             }
         }
     }
 
+    private function lockedLive($idx) {
+        $stmt = $this->db->prepare('SELECT * FROM live_list WHERE idx = :idx FOR UPDATE');
+        $stmt->execute(['idx' => $idx]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-    // 생방송 링크 삭제
+    private function disableOtherLive($church, $idx = 0) {
+        $stmt = $this->db->prepare("UPDATE live_list SET `use` = 'N', `view` = 'N' WHERE church = :church AND idx <> :idx");
+        return $stmt->execute(['church' => $church, 'idx' => $idx]);
+    }
+
+    // Enabling use selects exactly one broadcast and always requires fresh transmission approval.
+    public function toggle_use($idx, $expected = null) {
+        return $this->liveMutation(function () use ($idx, $expected) {
+            $row = $this->lockedLive($idx);
+            if (!$row || ($expected !== null && $expected !== $row['use'])) return false;
+            $next = $row['use'] === 'Y' ? 'N' : 'Y';
+            if ($next === 'Y' && !$this->disableOtherLive($row['church'], $idx)) return false;
+            $stmt = $this->db->prepare("UPDATE live_list SET `use` = :use, `view` = 'N' WHERE idx = :idx");
+            return $stmt->execute(['use' => $next, 'idx' => $idx]);
+        });
+    }
+
+    // Compare against current DB state; never trust a stale browser flag as the new value.
+    public function toggle_view($idx, $expected = null) {
+        return $this->liveMutation(function () use ($idx, $expected) {
+            $row = $this->lockedLive($idx);
+            if (!$row || ($expected !== null && $expected !== $row['view'])) return false;
+            $next = $row['view'] === 'Y' ? 'N' : 'Y';
+            if ($next === 'Y') {
+                if ($row['use'] !== 'Y') return false;
+                if (!$this->disableOtherLive($row['church'], $idx)) return false;
+            }
+            $stmt = $this->db->prepare('UPDATE live_list SET `view` = :view WHERE idx = :idx');
+            return $stmt->execute(['view' => $next, 'idx' => $idx]);
+        });
+    }
+
+    public function get_live_link_by_idx($idx) {
+        $stmt = $this->db->prepare('SELECT * FROM live_list WHERE idx = :idx');
+        $stmt->execute(['idx' => $idx]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function set_live_list($type, $idx = null) {
+        $church = $_POST['church'] ?? '';
+        $link = Youtube_link::video_id($_POST['link'] ?? '');
+        if ($link === null || !in_array($church, ['sky', 'beer'], true)) return false;
+        $params = ['church' => $church, 'worship' => $_POST['worship'] ?? '',
+            'title' => $_POST['title'] ?? '', 'link' => $link, 'passwd' => $_POST['password'] ?? ''];
+        return $this->liveMutation(function () use ($type, $idx, $church, $params) {
+            if ($type === 'save') {
+                if (!$this->disableOtherLive($church)) return false;
+                $sql = "INSERT INTO live_list (church, worship, title, link, passwd, `use`, `view`, date_insert)
+                        VALUES (:church, :worship, :title, :link, :passwd, 'Y', 'N', NOW())";
+            } elseif ($type === 'mod' && $idx) {
+                $row = $this->lockedLive($idx);
+                if (!$row) return false;
+                $sql = 'UPDATE live_list SET church = :church, worship = :worship, title = :title, link = :link, passwd = :passwd, date_update = NOW()';
+                if ($row['use'] === 'Y' && !$this->disableOtherLive($church, $idx)) return false;
+                if ($row['church'] !== $church) $sql .= ", `view` = 'N'";
+                $sql .= ' WHERE idx = :idx';
+                $params['idx'] = $idx;
+            } else {
+                return false;
+            }
+            return $this->db->prepare($sql)->execute($params);
+        });
+    }
+
     public function delete_live_list($live_idx) {
-        $stmt = $this->db->prepare("DELETE FROM live_list WHERE idx = :idx");
-        $stmt->execute(['idx' => $live_idx]);
+        return $this->liveMutation(function () use ($live_idx) {
+            $stmt = $this->db->prepare('DELETE FROM live_list WHERE idx = :idx');
+            return $stmt->execute(['idx' => $live_idx]);
+        });
     }
 
     /** 생방송 링크 관리 끝 */

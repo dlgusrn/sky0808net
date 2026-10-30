@@ -17,6 +17,7 @@
         </div>
         <div class="form-signin">
             <form method="post" action="/admin/admin_login_proc">
+                    <?=csrf_field()?>
                 <div class="">
                     <label for="admin_name">관리자 이름</label>
                     <input autocomplete="username" type="text" class="form-control" name="admin_name" id="admin_name" style="ime-mode: active;" placeholder="관리자 이름">

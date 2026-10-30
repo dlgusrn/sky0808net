@@ -15,7 +15,7 @@ function render_pagination($page, $total_page, $block_start, $block_end, $total)
     };
     ob_start();
     ?>
-    <div class="d-grid d-flex justify-content-center">
+    <div class="admin-pagination">
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">

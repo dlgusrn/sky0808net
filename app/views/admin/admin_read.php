@@ -7,6 +7,7 @@
     <div class="nav-right">
         <h4 class="main-title">관리자 관리</h4>
         <form method="post" action="/admin/set_admin?idx=<?= $admin['idx'] ?>">
+                    <?=csrf_field()?>
                 <?php if (array_key_exists('notice', $_SESSION['admin_info'] ?? [])): ?>
                 <div class="form-check form-switch mb-3">
                     <input type="checkbox" class="form-check-input" name="notice" id="notice-permission" <?= ($admin['notice'] ?? 'N') === 'Y' ? 'checked' : '' ?>>

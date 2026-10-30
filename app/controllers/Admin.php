@@ -178,6 +178,9 @@ class Admin extends Controller {
 
     public function admin_login_proc() {
         $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
         $admin_name = $_POST['admin_name'] ?? '';
         $admin_password = $_POST['admin_password'] ?? '';
 
@@ -232,6 +235,9 @@ class Admin extends Controller {
 
     public function admin_logout_proc() {
         $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
         $admin_user_name = $_SESSION['admin_user_name'] ?? null;
 
         if ($admin_user_name) {
@@ -300,26 +306,33 @@ class Admin extends Controller {
         $this->renderAdminList('live_list');
     }
 
-    // use 상태 토글 (Ajax)
     public function update_use() {
         $this->authorizeAdmin(__FUNCTION__);
-        $idx = $_GET['idx'] ?? null;
-        if ($idx) {
-            $result = $this->admin_model->toggle_use($idx);
-            echo json_encode(['result' => $result]);
-        }
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        header('Content-Type: application/json; charset=utf-8');
+        $idx = input_int('idx', $_POST);
+        $expected = $_POST['use'] ?? null;
+        if (!in_array($expected, ['Y', 'N'], true)) { http_response_code(422); exit; }
+        $result = $this->admin_model->toggle_use($idx, $expected);
+        if (!$result) http_response_code(409);
+        echo json_encode(['result' => $result]);
         exit;
     }
 
-    // view 상태 토글 (Ajax)
     public function update_view() {
         $this->authorizeAdmin(__FUNCTION__);
-        $idx = $_GET['idx'] ?? null;
-        $view = $_GET['view'] ?? null;
-        if ($idx && $view !== null) {
-            $result = $this->admin_model->toggle_view($idx, $view);
-            echo json_encode(['result' => $result]);
-        }
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        header('Content-Type: application/json; charset=utf-8');
+        $idx = input_int('idx', $_POST);
+        $expected = $_POST['view'] ?? null;
+        if (!in_array($expected, ['Y', 'N'], true)) { http_response_code(422); exit; }
+        $result = $this->admin_model->toggle_view($idx, $expected);
+        if (!$result) http_response_code(409);
+        echo json_encode(['result' => $result]);
         exit;
     }
 
@@ -389,7 +402,7 @@ class Admin extends Controller {
 
         if ($live_idx) {
             // 생방송 접속자 목록에서 제거
-            $this->admin_model->delete_live_list($live_idx);
+            if (!$this->admin_model->delete_live_list($live_idx)) { http_response_code(409); exit; }
         }
 
         // 삭제 후 이동
@@ -410,6 +423,9 @@ class Admin extends Controller {
 
     public function set_black_list() {
         $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
         $nickname = $_POST['nickname'] ?? '';
 
         if ($nickname) {
@@ -430,7 +446,10 @@ class Admin extends Controller {
 
     public function del_black_list() {
         $this->authorizeAdmin(__FUNCTION__);
-        $black_list_idx = $_GET['idx'] ?? null;
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        $black_list_idx = $_POST['idx'] ?? null;
 
         if ($black_list_idx) {
             // 체크된 수량만큼 블랙리스트 제거
@@ -493,6 +512,9 @@ class Admin extends Controller {
 
     public function set_video_list() {
         $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
         $idx = $_GET['idx'] ?? null;
         $type = $idx ? 'mod' : 'save';
 
@@ -517,7 +539,10 @@ class Admin extends Controller {
     
     public function del_video_list() {
         $this->authorizeAdmin(__FUNCTION__);
-        $video_idx = $_GET['idx'] ?? null;
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        $video_idx = $_POST['idx'] ?? null;
 
         if ($video_idx) {
             // 생방송 접속자 목록에서 제거
@@ -580,6 +605,9 @@ class Admin extends Controller {
 
     public function set_admin() {
         $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $idx = $_GET['idx'] ?? null; // 있을 경우 수정
 
@@ -602,7 +630,10 @@ class Admin extends Controller {
     // 관리자 삭제
     public function del_admin() {
         $this->authorizeAdmin(__FUNCTION__);
-        $admin_idx = $_GET['idx'] ?? null;
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        $admin_idx = $_POST['idx'] ?? null;
 
         if ($admin_idx) {
             // 체크된 수량만큼 관리자 삭제
@@ -639,6 +670,9 @@ class Admin extends Controller {
 
     public function set_preacher() {
         $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $idx = $_POST['mod_idx'] ?? null;
             $name = trim($_POST['name'] ?? $_POST['mod_name'] ?? '');
@@ -662,7 +696,10 @@ class Admin extends Controller {
     // 설교자 삭제
     public function del_preacher() {
         $this->authorizeAdmin(__FUNCTION__);
-        $preacher_idx = $_GET['idx'] ?? null;
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        $preacher_idx = $_POST['idx'] ?? null;
 
         if ($preacher_idx) {
             // 체크된 수량만큼 설교자 삭제

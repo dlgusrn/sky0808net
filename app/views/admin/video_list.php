@@ -13,21 +13,8 @@
                     <thead>
                         <tr>
                             <th width="8%">번호</th>
-                            <th width="10%">
-                                <select class="form-select form-select-sm" id="preacher_select">
-                                    <option value="">설교자</option>
-                                    <?php foreach ($preacher_list as $preacher_row): ?>
-                                        <option value="<?=htmlspecialchars($preacher_row['name'])?>" <?=($preacher_select == $preacher_row['name']) ? 'selected' : ''?>><?=htmlspecialchars($preacher_row['name'])?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </th>
-                            <th width="10%">
-                                <select class="form-select form-select-sm" id="church_select">
-                                    <option value="">교회</option>
-                                    <option value="sky" <?=$church_select == 'sky' ? 'selected' : ''?>>하늘문</option>
-                                    <option value="beer" <?=$church_select == 'beer' ? 'selected' : ''?>>브엘성회</option>
-                                </select>
-                            </th>
+                            <th width="10%">설교자</th>
+                            <th width="10%">교회</th>
                             <th>제목</th>
                             <th width="16%">수정일자</th>
                             <th width="16%">생성일자</th>
@@ -63,14 +50,6 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-grid d-flex justify-content-end">
-                <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#video_add_modal">등록</a>
-            </div>
-            
-            <?php
-            include_once __DIR__ . '/../../helpers/pagination_helper.php';
-            echo render_pagination($page, $total_page, $block_start, $block_end, $total);
-            ?>
         </div>
     </div>
 </main>
@@ -85,6 +64,7 @@
             </div>
             <div class="modal-body">
                 <form method="post" action="/admin/set_video_list">
+                    <?=csrf_field()?>
                     <div class="container">
                         <div class="mb-3 row">
                             <label for="preacher" class="col-sm-2 col-form-label">설교자</label>
@@ -140,31 +120,5 @@
 <script>
     // 오늘 날짜 자동 입력
     $('#title').val(new Date().toISOString().substring(0, 10));
-
-    // URL 파라미터 유지 & 특정 값만 변경
-    function updateQueryParam(param, value) {
-        const url = new URL(window.location.href);
-        const searchParams = new URLSearchParams(url.search);
-
-        if (value) {
-            searchParams.set(param, value); // update or add param
-        } else {
-            searchParams.delete(param); // remove if empty
-        }
-
-        searchParams.delete('page');
-        // 새 URL 적용
-        window.location.href = url.pathname + '?' + searchParams.toString();
-    }
-
-    // 교회 변경
-    $('#church_select').change(function () {
-        updateQueryParam('church', $(this).val());
-    });
-
-    // 설교자 변경
-    $('#preacher_select').change(function () {
-        updateQueryParam('preacher', $(this).val());
-    });
 
 </script>

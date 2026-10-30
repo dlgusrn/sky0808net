@@ -50,15 +50,6 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-grid d-flex justify-content-end">
-                <a type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#admin_add_modal">등록</a>
-                <button type="button" class="btn btn-danger" id="admin_delete">삭제</button>
-            </div>
-            
-            <?php
-            include_once __DIR__ . '/../../helpers/pagination_helper.php';
-            echo render_pagination($page, $total_page, $block_start, $block_end, $total);
-            ?>
         </div>
     </div>
 </main>
@@ -73,6 +64,7 @@
             </div>
             <div class="modal-body">
                 <form method="post" action="/admin/set_admin">
+                    <?=csrf_field()?>
                 <?php if (array_key_exists('notice', $_SESSION['admin_info'] ?? [])): ?>
                 <div class="form-check form-switch mb-3">
                     <input type="checkbox" class="form-check-input" name="notice" id="notice-permission" checked>
@@ -195,7 +187,7 @@
         });
 
         if(arr.length > 0){
-            location.href = '/admin/del_admin?idx=' + arr;
+            adminPost('/admin/del_admin', {idx: arr.join(',')});
         } else {
             alert('선택된 항목이 없습니다.');
         }

@@ -41,7 +41,7 @@
             <!-- <a class="nav-side" href="/admin/saint_list">　성도 관리</a> -->
         </div>
         <? endif ; ?>
-        <a class="nav-logout" href="/admin/admin_logout_proc">로그아웃</a>
+        <form method="post" action="/admin/admin_logout_proc" class="admin-logout-form"><?=csrf_field()?><button type="submit" class="nav-logout">로그아웃</button></form>
     </div>
 </div>
 <div class="nav-menu">
@@ -83,5 +83,5 @@
         <!-- <a class="nav-side" href="/admin/saint_list">　성도 관리</a> -->
     </div>
     <? endif ; ?>
-    <a class="nav-logout" href="/admin/admin_logout_proc">로그아웃</a>
+    <form method="post" action="/admin/admin_logout_proc" class="admin-logout-form"><?=csrf_field()?><button type="submit" class="nav-logout">로그아웃</button></form>
 </div>

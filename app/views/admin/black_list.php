@@ -35,15 +35,6 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-grid d-flex justify-content-end mb-3">
-                <a type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#blacklistAddModal">등록</a>
-                <button type="button" class="btn btn-danger" id="blacklist_delete">삭제</button>
-            </div>
-
-            <?php
-            include_once __DIR__ . '/../../helpers/pagination_helper.php';
-            echo render_pagination($page, $total_page, $block_start, $block_end, $total);
-            ?>
         </div>
     </div>
 </main>
@@ -58,6 +49,7 @@
             </div>
             <div class="modal-body">
                 <form method="post" action="/admin/set_black_list">
+                    <?=csrf_field()?>
                     <div class="container">
                         <div class="mb-3 row">
                             <label for="nickname" class="col-sm-2 col-form-label">닉네임</label>
@@ -85,7 +77,7 @@
         });
 
         if(arr.length > 0){
-            location.href = '/admin/del_black_list?idx=' + arr;
+            adminPost('/admin/del_black_list', {idx: arr.join(',')});
         } else {
             alert('선택된 항목이 없습니다.');
         }
