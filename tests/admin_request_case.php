@@ -29,11 +29,16 @@ if($tokenMode==='valid')$_POST['csrf']='test-token';
 if($tokenMode==='bad')$_POST['csrf']='invalid';
 if($tokenMode==='array')$_POST['csrf']=['test-token'];
 $expected=$method!=='POST'?405:($tokenMode==='valid'?200:403);
-register_shutdown_function(function()use($expected,$action,$method,$tokenMode){
+$redirectActions=['admin_login_proc','admin_logout_proc','set_live_list','del_live_list',
+    'set_black_list','del_black_list','set_video_list','del_video_list','del_admin',
+    'set_preacher','del_preacher','set_notice'];
+// Native PHP reports Location headers as 302; the local WASM CLI can retain 200.
+$allowedStatuses=$expected===200&&in_array($action,$redirectActions,true)?[200,302]:[$expected];
+register_shutdown_function(function()use($expected,$allowedStatuses,$action,$method,$tokenMode){
     global $writes;
     $actual=http_response_code()?:200;
-    if($actual!==$expected||($expected!==200&&$writes!==0)||($expected===200&&$writes===0)){
-        fwrite(STDERR,"FAIL: $action $method $tokenMode HTTP=$actual writes=$writes expected=$expected\n");exit(1);
+    if(!in_array($actual,$allowedStatuses,true)||($expected!==200&&$writes!==0)||($expected===200&&$writes===0)){
+        fwrite(STDERR,"FAIL: $action $method $tokenMode HTTP=$actual writes=$writes expected=".implode('/',$allowedStatuses)."\n");exit(1);
     }
 });
 ob_start();
