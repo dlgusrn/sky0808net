@@ -1,9 +1,0 @@
-<? 
-// 기본 설정 파일을 불러온다
-include_once '../inc/config.inc' ;
-require_admin('live_manage');
-
-$data = $DB->query( "SELECT * FROM live_entry WHERE church = 'beer' ORDER BY branch ASC, idx DESC" )->fetchAll() ;
-
-echo json_encode($data);
-?>

@@ -1,4 +1,4 @@
-# Local IDE and operating-system files (already tracked files are left untouched).
+# Local IDE and operating-system files.
 .DS_Store
 .idea/
 __pycache__/
@@ -12,5 +12,5 @@ __pycache__/
 /public/admin-*-preview.html
 /public/*-check-*.php
 
-# One-time dev patch handoffs; final application source is versioned instead.
+# Retired one-time patch scripts; code changes are deployed through Git.
 /tools/*.py

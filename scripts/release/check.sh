@@ -15,6 +15,4 @@ if [[ "${1:-}" == "--database" ]]; then
   php "$release_root/tests/admin_listing_db.php"
   php "$release_root/tests/broadcast_status_db.php"
 fi
-python3 "$release_root/tests/release_tools.py"
-python3 "$release_root/tests/production_cutover.py"
-printf 'PASS: PHP syntax and release regression checks.\n'
+printf 'PASS: PHP syntax and application regression checks.\n'
