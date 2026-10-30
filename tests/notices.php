@@ -32,9 +32,10 @@ class NoticeTestStatement {
     private $db;
     public function __construct($db) { $this->db = $db; }
     public function execute($params) { $this->db->params = $params; return true; }
+    public function rowCount() { return $this->db->deleted; }
 }
 class NoticeTestDB {
-    public $sql; public $params;
+    public $sql; public $params; public $deleted=1;
     public function prepare($sql) { $this->sql = $sql; return new NoticeTestStatement($this); }
 }
 class NoticeTestModel extends Notice_model {
@@ -50,4 +51,10 @@ notice_check($db->params['attached'] === '', 'New notice without attachment');
 $failed = false;
 try { $model->save(999, $data, null); } catch (InvalidArgumentException $error) { $failed = true; }
 notice_check($failed, 'Missing notice rejected before upload');
+notice_check($model->delete(1)===true && $db->params===['idx'=>1] && strpos($db->sql,'DELETE FROM notice WHERE idx = :idx')!==false,'Delete binds only the selected notice');
+$db->deleted=0;
+notice_check($model->delete(999)===false,'Missing notice deletion reported');
+$controller=file_get_contents(__DIR__.'/../app/controllers/Admin.php');
+preg_match('/public function del_notice\(\) \{(.*?)public function update_enable/s',$controller,$deleteAction);
+notice_check(isset($deleteAction[1]) && strpos($deleteAction[1],'require_post();')!==false && strpos($deleteAction[1],'require_csrf();')!==false,'Notice deletion requires POST and CSRF');
 echo 'PASS: ', $count, ' notice validation, HTML, upload and attachment preservation checks.', PHP_EOL;

@@ -133,8 +133,8 @@ $date = explode('-', $video['title']);
                             </div>
                         </div>
                         <div class="gap-2 d-flex justify-content-end">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
                             <button type="submit" class="btn btn-primary">저장</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         </div>
                     </div>
                 </form>

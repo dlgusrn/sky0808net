@@ -41,7 +41,7 @@
                 <p id="notice-preview-status" class="small text-muted mt-2" aria-live="polite" hidden></p>
             </div>
         </div>
-        <div class="d-flex justify-content-end gap-2"><button type="submit" class="btn btn-primary">저장</button><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button></div>
+        <div class="d-flex align-items-center gap-2"><button type="button" class="btn btn-danger me-auto" id="notice-delete" hidden>삭제</button><div class="d-flex gap-2 ms-auto"><button type="submit" class="btn btn-primary">저장</button><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button></div></div>
     </form></div>
 </div></div></div>
 
@@ -103,7 +103,7 @@
         plugins: 'lists link image table', toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table',
         setup: function (ed) { ed.on('init', function () { ed.setContent($('#notice-contents').val()); }); }});
     $('#notice-add').on('click', function () {
-        form.reset(); $('#notice-idx').val(''); content(''); resetAttachment('', '');
+        form.reset(); $('#notice-delete').prop('hidden', true); $('#notice-idx').val(''); content(''); resetAttachment('', '');
         var d = new Date(); var today = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
         $('#notice-start, #notice-end').val(today); $('#notice-modal-title').text('공지사항 등록'); modal.show();
     });
@@ -112,10 +112,20 @@
         event.preventDefault();
         $.ajax({url:'/admin/get_notice', data:{idx:$(this).data('id')}, dataType:'json', cache:false})
         .done(function (data) {
-            form.reset(); $('#notice-idx').val(data.idx); $('#notice-start').val(data.start_date); $('#notice-end').val(data.end_date);
+            form.reset(); $('#notice-delete').prop('hidden', false).prop('disabled', false); $('#notice-idx').val(data.idx); $('#notice-start').val(data.start_date); $('#notice-end').val(data.end_date);
             $('#notice-title').val(data.title); content(data.contents); $('#notice-modal-title').text('공지사항 수정');
             resetAttachment(data.attachment_url, data.attached); modal.show();
         }).fail(fail);
+    });
+    $('#notice-delete').on('click', function () {
+        var idx = $('#notice-idx').val();
+        if (!idx || !confirm('이 공지사항을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.')) return;
+        var button = $(this); button.prop('disabled', true);
+        $.ajax({url:'/admin/del_notice', type:'POST', data:{idx:idx,csrf:csrf}, dataType:'json'})
+        .done(function (data) {
+            if (data.success) window.location.reload();
+            else alert(data.message || '삭제하지 못했습니다.');
+        }).fail(fail).always(function () { button.prop('disabled', false); });
     });
     $('.notice-enable').on('click', function () {
         var button = $(this); button.prop('disabled', true);

@@ -104,7 +104,7 @@ include_once __DIR__ . '/../layout/header.php';
                                 </select>
                             </div>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="title" id="title" value="<?=htmlspecialchars((string) $row['title'], ENT_QUOTES, 'UTF-8')?>">
+                                <input type="date" class="form-control" name="title" id="title" value="<?=htmlspecialchars((string) $row['title'], ENT_QUOTES, 'UTF-8')?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -120,8 +120,8 @@ include_once __DIR__ . '/../layout/header.php';
                             </div>
                         </div>
                         <div class="gap-2 d-flex justify-content-end">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
                             <button class="btn btn-primary" type="submit">저장</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         </div>
                     </div>
                 </form>

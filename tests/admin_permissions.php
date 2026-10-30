@@ -5,7 +5,7 @@ $viewer = ['level' => 4, 'live_manage' => 'Y'];
 $grouped = [
     'public' => ['login', 'admin_login_proc'],
     'viewer' => ['index', 'main', 'get_sky_live_user', 'get_beer_live_user'],
-    'links' => ['notice', 'get_notice', 'set_notice', 'update_enable', 'live_list', 'live_read', 'set_live_list', 'del_live_list', 'update_use', 'update_view'],
+    'links' => ['notice', 'get_notice', 'set_notice', 'del_notice', 'update_enable', 'live_list', 'live_read', 'set_live_list', 'del_live_list', 'update_use', 'update_view'],
     'history' => ['history'],
     'blacklist' => ['black_list', 'set_black_list', 'del_black_list'],
     'videos' => ['video_list', 'video_read', 'set_video_list', 'del_video_list'],
@@ -36,7 +36,7 @@ foreach (['links' => 'live_list', 'history' => 'history', 'blacklist' => 'black_
     }
 }
 foreach ($grouped['links'] as $action) check_access($action, ['live_manage' => 'N', 'live_list' => 'Y'], false);
-foreach (['notice', 'get_notice', 'set_notice', 'update_enable'] as $action) {
+foreach (['notice', 'get_notice', 'set_notice', 'del_notice', 'update_enable'] as $action) {
     check_access($action, $all + ['notice' => 'N'], false);
     check_access($action, ['level' => 3, 'live_manage' => 'Y', 'live_list' => 'N', 'notice' => 'Y'], true);
 }

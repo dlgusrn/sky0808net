@@ -30,7 +30,7 @@ class Admin_access {
         if (in_array($action, $level_one, true)) {
             return isset($admin['level']) && (string) $admin['level'] === '1';
         }
-        if (in_array($action, ['notice', 'get_notice', 'set_notice', 'update_enable'], true)) {
+        if (in_array($action, ['notice', 'get_notice', 'set_notice', 'del_notice', 'update_enable'], true)) {
             $permission = array_key_exists('notice', $admin) ? 'notice' : 'live_list';
             return ($admin['live_manage'] ?? 'N') === 'Y' && ($admin[$permission] ?? 'N') === 'Y';
         }

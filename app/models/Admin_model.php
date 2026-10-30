@@ -128,12 +128,22 @@ class Admin_model extends Model {
         $passwd   = $_POST['password'] ?? '';
 
         $link = Youtube_link::video_id($link);
-        if ($link === null) return false;
+        if ($link === null || !in_array($church, ['sky', 'beer'], true)) return false;
+        $registrationLock = null;
 
         try {
             if ($type === 'save') {
-                $sql = "INSERT INTO live_list (church, worship, title, link, passwd, date_insert)
-                        VALUES (:church, :worship, :title, :link, :passwd, NOW())";
+                // Serialize registrations for the same church, including the first row.
+                $lockName = 'sky0808net:live-register:' . $church;
+                $lock = $this->db->prepare('SELECT GET_LOCK(:name, 5)');
+                $lock->execute(['name' => $lockName]);
+                if ((int) $lock->fetchColumn() !== 1) throw new RuntimeException('방송 등록 잠금을 얻지 못했습니다.');
+                $registrationLock = $lockName;
+                $this->db->beginTransaction();
+                $disable = $this->db->prepare("UPDATE live_list SET `use` = 'N' WHERE church = :church");
+                $disable->execute(['church' => $church]);
+                $sql = "INSERT INTO live_list (church, worship, title, link, passwd, `use`, `view`, date_insert)
+                        VALUES (:church, :worship, :title, :link, :passwd, 'Y', 'N', NOW())";
                 $stmt = $this->db->prepare($sql);
                 $success = $stmt->execute([
                     'church'  => $church,
@@ -160,16 +170,28 @@ class Admin_model extends Model {
             }
 
             if ($success) {
+                if ($registrationLock !== null) $this->db->commit();
                 return true;
             } else {
+                if ($registrationLock !== null && $this->db->inTransaction()) $this->db->rollBack();
                 // 실패 로그 기록
                 $this->system_log('ERROR', '[링크 '.($type === 'save' ? '등록' : '수정')." 실패] church: $church, title: $title, idx: $idx");
                 return false;
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            if ($registrationLock !== null && $this->db->inTransaction()) $this->db->rollBack();
             // 예외 발생 시 로그 기록
             $this->system_log('ERROR', '[링크 '.($type === 'save' ? '등록' : '수정')." 예외] " . $e->getMessage());
             return false;
+        } finally {
+            if ($registrationLock !== null) {
+                try {
+                    $release = $this->db->prepare('SELECT RELEASE_LOCK(:name)');
+                    $release->execute(['name' => $registrationLock]);
+                } catch (Throwable $error) {
+                    error_log('Broadcast registration lock release failed: ' . $error->getMessage());
+                }
+            }
         }
     }
 

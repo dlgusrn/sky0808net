@@ -114,6 +114,28 @@ class Admin extends Controller {
         exit;
     }
 
+    public function del_notice() {
+        $this->authorizeAdmin(__FUNCTION__);
+        require_once __DIR__ . '/../views/layout/auth.inc';
+        require_post();
+        require_csrf();
+        header('Content-Type: application/json; charset=utf-8');
+        try {
+            $deleted = $this->model('Notice_model')->delete(input_int('idx', $_POST));
+            if (!$deleted) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => '공지사항을 찾을 수 없습니다.']);
+            } else {
+                echo json_encode(['success' => true]);
+            }
+        } catch (Throwable $error) {
+            error_log('Notice delete failed: ' . $error->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => '삭제하지 못했습니다. 다시 시도해 주세요.']);
+        }
+        exit;
+    }
+
     public function update_enable() {
         $this->authorizeAdmin(__FUNCTION__);
         require_once __DIR__ . '/../views/layout/auth.inc';

@@ -22,7 +22,7 @@ document.getElementById('list-per-page').addEventListener('change',function(){th
     <input type="hidden" name="range" id="list-date-range" value="<?=e($filters['range'])?>">
     <div class="admin-date-presets" role="group" aria-label="조회 기간 선택">
         <span>조회 기간</span>
-        <?php foreach (($list_kind === 'history' ? ['today'=>'당일'] : []) + ['week'=>'1주일','month'=>'1개월','quarter'=>'3개월','year'=>'1년','custom'=>'직접 선택'] as $range=>$label): ?>
+        <?php foreach (['today'=>'오늘','week'=>'1주일','month'=>'1개월','quarter'=>'3개월','year'=>'1년','custom'=>'직접 선택'] as $range=>$label): ?>
             <button type="button" class="btn btn-sm <?= $filters['range']===$range?'btn-primary':'btn-outline-secondary' ?>" data-date-range="<?=e($range)?>" aria-pressed="<?=$filters['range']===$range?'true':'false'?>"><?=e($label)?></button>
         <?php endforeach; ?>
     </div>

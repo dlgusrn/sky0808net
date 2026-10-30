@@ -35,6 +35,11 @@ class Notice_model extends Model {
             throw $error;
         }
     }
+    public function delete($idx) {
+        $stmt = $this->db->prepare('DELETE FROM notice WHERE idx = :idx');
+        $stmt->execute(['idx' => $idx]);
+        return $stmt->rowCount() > 0;
+    }
     public function toggle($idx) {
         $stmt = $this->db->prepare("UPDATE notice SET enable = CASE WHEN enable = 'Y' THEN 'N' ELSE 'Y' END, update_date = NOW() WHERE idx = :idx");
         $stmt->execute(['idx' => $idx]);

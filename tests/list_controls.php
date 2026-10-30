@@ -24,5 +24,6 @@ foreach(['black_list','admin_list','preacher_list']as $kind){
 foreach(['live_list','video_list','history','notice']as $kind){
  $f=Admin_filters::for_kind($kind,[]);control_check($f['range']===($kind==='history'?'today':'week')&&$f['start_date']!=='','Searchable menus retain default dates');
  $html=controls($kind);control_check(strpos($html,'name="q"')!==false&&strpos($html,'name="start_date"')!==false,'Search controls remain');
+ control_check(strpos($html,'data-date-range="today"')!==false&&strpos($html,'>오늘</button>')!==false,'Today available on all date lists');
 }
 echo 'PASS: ',$count,' keyword-only controls and stale date query checks.',PHP_EOL;

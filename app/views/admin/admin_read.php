@@ -72,7 +72,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-2">
                     <button class="btn btn-primary" type="submit">저장</button>
-                    <a href="/admin/admin_list" class="btn btn-danger">취소</a>
+                    <a href="/admin/admin_list" class="btn btn-secondary">취소</a>
                 </div>
             </div>
         </form>

@@ -26,7 +26,7 @@
                         <?php foreach ($list as $row): ?>
                         <tr>
                             <td><input type="checkbox" value="<?= $row['idx'] ?>" name="del_check"></td>
-                            <td><?= ($page_set * ($page - 1)) + $subt ?></td>
+                            <td><?= $total - ($page_set * ($page - 1)) - ($subt - 1) ?></td>
                             <td><?= htmlspecialchars($row['nickname']) ?></td>
                         </tr>
                         <?php if ($subt < $page_set) $subt++; ?>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="gap-2 d-flex justify-content-end">
                         <button class="btn btn-primary" type="submit">저장</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                     </div>
                 </form>
             </div>
