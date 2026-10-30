@@ -31,5 +31,11 @@ foreach(['live_list','video_list','history','black_list','admin_list','preacher_
     layout_check((strpos($html,'>등록하기</button>')!==false)===($kind!=='history'),'Appropriate add action: '.$kind);
     if(in_array($kind,['live_list','video_list'],true))layout_check(strpos($html,'id="list-church"')!==false&&strpos($html,'id="church_select"')===false,'Single church filter: '.$kind);
     if($kind==='video_list')layout_check(strpos($html,'id="list-preacher"')!==false&&strpos($html,'id="preacher_select"')===false,'Single preacher filter');
+    if($kind==='notice'){
+        $modal=strpos($html,'<div class="modal fade" id="notice-modal"');
+        $form=strpos($html,'id="notice-form"');
+        layout_check($modal!==false&&$form!==false&&$modal>strpos($html,'</main>')&&$form>$modal,'Notice form belongs to a modal after the main list');
+        layout_check(substr_count($html,'id="notice-modal"')===1&&substr_count($html,'id="notice-form"')===1,'Exactly one notice modal and form');
+    }
 }
 echo 'PASS: ',$count,' compact list layout, action placement, period and filter association checks.',PHP_EOL;

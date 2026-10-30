@@ -20,12 +20,17 @@ foreach(['login','admin_list','admin_read','black_list','preacher_list','video_l
     $html=render_csrf_page($name);
     // Rendered forms are flat; inspect the actual output rather than PHP source templates.
     preg_match_all('~<form\b([^>]*)>(.*?)</form>~s',$html,$forms,PREG_SET_ORDER);
+    $expectedActions=['login'=>'admin_login_proc','admin_list'=>'set_admin','admin_read'=>'set_admin','black_list'=>'set_black_list','preacher_list'=>'set_preacher','video_list'=>'set_video_list','video_read'=>'set_video_list','live_list'=>'set_live_list','live_read'=>'set_live_list','notice'=>'set_notice'];
+    $hasExpectedForm=false;
     foreach($forms as $form){
         if(strpos($form[1],'method="post"')===false)continue;
         preg_match_all('~<input\b[^>]*name="csrf"[^>]*>~',$form[2],$tokens);
         if(count($tokens[0])!==1||strpos($tokens[0][0],'value="test-form-token"')===false)throw new RuntimeException('Missing/duplicate/malformed CSRF field: '.$name);
+        if(strpos($form[1],'action="/admin/'.$expectedActions[$name])!==false)$hasExpectedForm=true;
         $count++;
     }
+    if(!$hasExpectedForm)throw new RuntimeException('Missing actual mutation form: '.$name);
+    $count++;
     if($name==='live_list'){
         if(!preg_match('~<button[^>]*class="view [^>]* disabled>~',$html))throw new RuntimeException('Inactive transmission button must be disabled');
         $count++;

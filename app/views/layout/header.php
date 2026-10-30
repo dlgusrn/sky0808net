@@ -34,7 +34,7 @@
         <link href="/css/main.css?<?=date('Y-m-d h:i:s')?>" rel="stylesheet">
         <link href="/css/dashboard.css?<?=date('Y-m-d h:i:s')?>" rel="stylesheet">
         <?php if ($url[1] === 'admin'): ?>
-        <link href="/css/admin.css?v=20261030-compact-lists" rel="stylesheet">
+        <link href="/css/admin.css?v=20261030-table-text2" rel="stylesheet">
         <script src="/js/admin-ui.js?v=20261030-post-csrf" defer></script>
         <?php endif; ?>
         <link rel="preconnect" href="https://fonts.googleapis.com">

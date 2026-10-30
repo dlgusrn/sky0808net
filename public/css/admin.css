@@ -204,3 +204,9 @@ body.admin-ui {font-size:13px}
  .admin-ui .admin-list-toolbar-right {gap:6px}
  .admin-ui .admin-list-toolbar #list-per-page {width:68px;font-size:11px;padding-left:7px;padding-right:23px}
 }
+
+/* Increase only management-table text by 2px; compact search/toolbars stay unchanged. */
+.admin-ui .nav-right .table {font-size:14px}
+.admin-ui .nav-right .table thead th {font-size:13px}
+.admin-ui .nav-right .table .btn {font-size:14px}
+.admin-ui .nav-right .table .btn-sm {font-size:13px}
