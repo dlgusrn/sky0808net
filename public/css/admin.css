@@ -170,7 +170,7 @@ body.admin-ui { --admin-accent: #355cde; --admin-line: #e4e9f1; background: #f5f
 
 /* Compact preview only on the broadcast link detail page. */
 .admin-ui .live-main .main-row .nav-right .admin-row .live.admin-link-preview {
- flex:0 1 900px;width:100%;max-width:900px;min-width:0;padding:0;margin:0 auto;
+ flex:0 1 800px;width:100%;max-width:800px;min-width:0;padding:0;margin:0 auto;
 }
 
 .admin-ui .admin-logout-form { margin: 0; }
@@ -210,3 +210,10 @@ body.admin-ui {font-size:13px}
 .admin-ui .nav-right .table thead th {font-size:13px}
 .admin-ui .nav-right .table .btn {font-size:14px}
 .admin-ui .nav-right .table .btn-sm {font-size:13px}
+
+/* Leave room for detail fields and actions at normal desktop browser heights. */
+@media (min-width:768px) {
+ .admin-ui .live-main .main-row .nav-right .admin-row .live.admin-link-preview {
+  max-width:clamp(320px, calc((100dvh - 520px) * 16 / 9), 800px);
+ }
+}
