@@ -5,7 +5,7 @@ $id='eS6_s4GpYtk';$count=0;
 foreach([$id,'https://youtube.com/live/'.$id.'?feature=share','https://www.youtube.com/live/'.$id.'?si=test','https://youtu.be/'.$id.'?si=test&t=3','https://youtube.com/watch?v='.$id,'https://www.youtube.com/watch?feature=share&v='.$id.'&t=10','https://m.youtube.com/watch?v='.$id,'https://youtube.com/shorts/'.$id,'https://www.youtube.com/embed/'.$id,'https://www.youtube-nocookie.com/embed/'.$id,'youtube.com/live/'.$id,'  https://youtube.com/live/'.$id.'?feature=share  ','https://youtu.be/https://youtube.com/live/'.$id.'?feature=share']as $url){
  if(Youtube_link::video_id($url)!==$id)throw new RuntimeException('Valid YouTube share format rejected');$count++;
 }
-foreach(['','not-a-video','https://evil.example/live/'.$id,'https://youtube.com.evil.example/live/'.$id,'https://youtube.com@evil.example/live/'.$id,'https://evil.example/?url=https://youtube.com/live/'.$id,'https://youtu.be/'.$id.'/extra','https://youtube.com/watch?v[]=foo','javascript:alert(1)','https://youtube.com/channel/'.$id,[],null]as $url){
+foreach(['','invalid-video-id','https://evil.example/live/'.$id,'https://youtube.com.evil.example/live/'.$id,'https://youtube.com@evil.example/live/'.$id,'https://evil.example/?url=https://youtube.com/live/'.$id,'https://youtu.be/'.$id.'/extra','https://youtube.com/watch?v[]=foo','javascript:alert(1)','https://youtube.com/channel/'.$id,[],null]as $url){
  if(Youtube_link::video_id($url)!==null)throw new RuntimeException('Invalid link accepted');$count++;
 }
 class YoutubeStatement {private $db;public function __construct($db){$this->db=$db;}public function execute($params){$this->db->params=$params;return true;}}
